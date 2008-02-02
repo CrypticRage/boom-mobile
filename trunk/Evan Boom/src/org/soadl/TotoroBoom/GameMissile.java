@@ -24,12 +24,13 @@ public class GameMissile extends GameObject {
 			case GameObject.STATE_LARVAL:
 			case GameObject.STATE_ALIVE:
 			{
+				int missleRadius = 6;
 				Paint bluePaint = new Paint();
 				bluePaint.setAntiAlias(true);
 		        bluePaint.setARGB(255, 0, 0, 255);
-				canvas.drawCircle(getCurrentPos().x - (mExplosionRadius / 2), 
-						          getCurrentPos().y - (mExplosionRadius / 2),
-						          mExplosionRadius, bluePaint);
+				canvas.drawCircle(getCurrentPos().x - (missleRadius / 2), 
+						          getCurrentPos().y - (missleRadius / 2),
+						          missleRadius, bluePaint);
 			}
 			break;
 			
