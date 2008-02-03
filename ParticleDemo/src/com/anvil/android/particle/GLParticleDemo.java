@@ -85,7 +85,13 @@ public class GLParticleDemo extends Activity
 
 class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
 {
-    GLSurfaceView(Context context) {
+    SurfaceHolder		mHolder;
+    private GLThread	mGLThread;
+    private boolean		mHasSurface;
+    //private Cube		mCube;
+    private float		mAngle;
+	
+	GLSurfaceView(Context context) {
         super(context);
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed 
@@ -118,7 +124,18 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
     {
     	StopWatch watch;
     	boolean watchEn;
-    	
+        private boolean mDone;
+        private int     mWidth;
+        private int     mHeight;
+        
+        private FloatBuffer sqVert;
+        private float square[] = {
+        		0.25f, 0.25f, 0.0f,
+        		0.75f, 0.25f, 0.0f,
+        		0.25f, 0.75f, 0.0f,
+        		0.75f, 0.75f, 0.0f
+        	    };
+        
     	GLThread() {
             super();
             mDone = false;
@@ -282,22 +299,6 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
             } catch (InterruptedException ex) { }
         }
         
-        private boolean mDone;
-        private int     mWidth;
-        private int     mHeight;
-        
-        private FloatBuffer sqVert;
-        private float square[] = {
-        		0.25f, 0.25f, 0.0f,
-        		0.75f, 0.25f, 0.0f,
-        		0.25f, 0.75f, 0.0f,
-        		0.75f, 0.75f, 0.0f
-        	    };
     }
 
-            SurfaceHolder       mHolder;
-    private GLThread            mGLThread;
-    private boolean             mHasSurface;
-    //private Cube                mCube;
-    private float               mAngle;
 }
