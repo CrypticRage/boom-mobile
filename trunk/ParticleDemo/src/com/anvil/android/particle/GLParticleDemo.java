@@ -128,29 +128,34 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
         private int     mWidth;
         private int     mHeight;
         
-        private FloatBuffer sqVert;
-        private float square[] = {
-        		0.25f, 0.25f, 0.0f,
-        		0.75f, 0.25f, 0.0f,
-        		0.25f, 0.75f, 0.0f,
-        		0.75f, 0.75f, 0.0f
-        	    };
+        private float rad = .05f;
+        private int numCircles = 100;
+        private int numSegments = 20;
+        private FloatBuffer circVert;
+        private ByteBuffer fbb;
+        private float circle[] = new float[numSegments*3];
         
     	GLThread() {
             super();
             mDone = false;
             mWidth = 0;
             mHeight = 0;
- 
-            ByteBuffer fbb = ByteBuffer.allocateDirect(square.length*4);
-            fbb.order(ByteOrder.nativeOrder());
+         
             watch = new StopWatch();
             watchEn = false;
-            
-            sqVert = fbb.asFloatBuffer();
-        	sqVert.put(square);
-        	sqVert.position(0);
-        }
+ 
+        	for(int j=0; j < numSegments; j++) {
+        		double angle = 2*Math.PI*j/numSegments;
+        		circle[j*3] = rad*(float)Math.cos(angle);
+        		circle[j*3+1] = rad*(float)Math.sin(angle);
+        		circle[j*3+2] = 0;
+        	}
+        	fbb = ByteBuffer.allocateDirect(circle.length*4);
+            fbb.order(ByteOrder.nativeOrder());
+            circVert = fbb.asFloatBuffer();
+        	circVert.put(circle);
+        	circVert.position(0);
+    	}
     
         @Override
         public void run() {
@@ -221,7 +226,7 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
              * when the viewport is resized.
              */
 
-            float ratio = (float)w / h;
+            //float ratio = (float)w / h;
             gl.glMatrixMode(gl.GL_PROJECTION);
             gl.glLoadIdentity();
             //gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
@@ -251,8 +256,15 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
             gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
             gl.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-            gl.glVertexPointer(3, gl.GL_FLOAT, 0, sqVert);
+            gl.glVertexPointer(3, gl.GL_FLOAT, 0, circVert);
             gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
+            
+            gl.glTranslatef(0, .5f, 0);
+            for(int i=0; i < numCircles; i++) {             
+                gl.glDrawArrays(gl.GL_TRIANGLE_FAN, 0, numSegments);       
+                gl.glTranslatef(.1f, 0, 0);
+            }         
+            
             /*
              * Now we're ready to draw some 3D object
              */
@@ -267,10 +279,8 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
             //gl.glEnable(gl.GL_CULL_FACE);
             //gl.glShadeModel(gl.GL_SMOOTH);
             //gl.glEnable(gl.GL_DEPTH_TEST);
-
-        	gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);       	
             
-            mAngle += 1.2f;
+            //mAngle += 1.2f;
 
 	        if (!watchEn) {
 	        	watch.start();
