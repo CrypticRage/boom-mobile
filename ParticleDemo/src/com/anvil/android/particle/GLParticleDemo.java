@@ -128,7 +128,7 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
         private int     mWidth;
         private int     mHeight;
         
-        private float rad = .05f;
+        private float rad = .02f;
         private int numCircles = 100;
         private int numSegments = 20;
         private FloatBuffer circVert;
@@ -226,11 +226,12 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
              * when the viewport is resized.
              */
 
-            //float ratio = (float)w / h;
+            float ratio = (float)w / (float)h;
             gl.glMatrixMode(gl.GL_PROJECTION);
             gl.glLoadIdentity();
             //gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
-        	gl.glOrthof(0.0f, 1.0f, 0.0f, 1.0f, -1.0f, 1.0f);
+        	//gl.glOrthof(0.0f, 1.0f, 0.0f, 1.0f, -1.0f, 1.0f);
+        	gl.glOrthof(-ratio, ratio, -1.0f, 1.0f, -1.0f, 1.0f);
         	
             /*
              * By default, OpenGL enables features that improve quality
@@ -259,7 +260,7 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
             gl.glVertexPointer(3, gl.GL_FLOAT, 0, circVert);
             gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
             
-            gl.glTranslatef(0, .5f, 0);
+            gl.glTranslatef(-1.0f, 0, 0);
             for(int i=0; i < numCircles; i++) {             
                 gl.glDrawArrays(gl.GL_TRIANGLE_FAN, 0, numSegments);       
                 gl.glTranslatef(.1f, 0, 0);
