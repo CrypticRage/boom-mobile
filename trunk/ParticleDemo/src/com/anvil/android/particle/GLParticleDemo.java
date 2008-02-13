@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
+import android.view.WindowManager;
 
 import java.nio.FloatBuffer;
 import java.nio.ByteBuffer;
@@ -45,9 +46,13 @@ public class GLParticleDemo extends Activity
         // for SurfaceView to work. Eventually this'll be done by
         // the system automatically.
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
-    
-        // We don't need a title either.
+      
+        // remove window title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        
+        // remove status bar
+        getWindow().setFlags(WindowManager.LayoutParams.NO_STATUS_BAR_FLAG,
+                WindowManager.LayoutParams.NO_STATUS_BAR_FLAG); 
         
         // Create our Preview view and set it as the content of our
         // Activity
@@ -93,6 +98,7 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
 	
 	GLSurfaceView(Context context) {
         super(context);
+       
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed 
         mHolder = getHolder();
@@ -129,8 +135,8 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
         private int     mHeight;
         
         private float rad = .02f;
-        private int numCircles = 100;
-        private int numSegments = 20;
+        private int numCircles = 20;
+        private int numSegments = 10;
         private FloatBuffer circVert;
         private ByteBuffer fbb;
         private float circle[] = new float[numSegments*3];
@@ -260,7 +266,7 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
             gl.glVertexPointer(3, gl.GL_FLOAT, 0, circVert);
             gl.glEnableClientState(gl.GL_VERTEX_ARRAY);
             
-            gl.glTranslatef(-1.0f, 0, 0);
+            gl.glTranslatef(-1.5f, 0, 0);
             for(int i=0; i < numCircles; i++) {             
                 gl.glDrawArrays(gl.GL_TRIANGLE_FAN, 0, numSegments);       
                 gl.glTranslatef(.1f, 0, 0);
