@@ -26,7 +26,7 @@ import android.view.WindowManager;
  * that uses OpenGL drawing into a dedicated surface.
  */
 public class GLSurfaceViewActivity extends Activity {    
-    //private GLSurfaceView mGLSurfaceView;	
+    //private GLSurfaceView mGLSurfaceView;
 	
     @Override
     protected void onCreate(Bundle icicle) {
@@ -42,7 +42,7 @@ public class GLSurfaceViewActivity extends Activity {
         // Create our Preview view and set it as the content of our
         // Activity
         //mGLSurfaceView = new GLSurfaceView(this);
-        //setContentView(mGLSurfaceView);
+        //setContentView(mGLSurfaceView);        
         setContentView(R.layout.boom);
     }
     
