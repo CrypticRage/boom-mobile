@@ -3,20 +3,34 @@ package org.soadl.TotoroBoom;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-public class GameMissile extends GameObject {
+
+public abstract class GameMissile extends GameObject {
 	
-	int mExplosionRadius;
+	protected int mExplosionRadius;	//Radius of explosion
+	protected int mProximityRadius;	//If a non-friendly is detected within
+									//this radius, trigger explosion
+	
+	// TODO find some list type to use.
+	// TODO if a MIRV exists as children in a container, how do the child missiles get
+	//      promoted to the main list when the container 'opens?'  Does this even need to happen
+	
 	
 	public GameMissile()
 	{
 		mExplosionRadius = 0;
+		mProximityRadius = 1;
+		
+		mExplosion = null;
 	}
 	
 	public GameMissile (int radius)
 	{
 		mExplosionRadius = radius;
+		mProximityRadius = 2;
+		
+		mExplosion = null;
 	}
-
+	
 	@Override
 	public void draw(Canvas canvas) {
 		switch (this.getState ())
@@ -24,27 +38,27 @@ public class GameMissile extends GameObject {
 			case GameObject.STATE_LARVAL:
 			case GameObject.STATE_ALIVE:
 			{
-				int missleRadius = 6;
+				int missileRadius = 6;
 				Paint bluePaint = new Paint();
+				
 				bluePaint.setAntiAlias(true);
 		        bluePaint.setARGB(255, 0, 0, 255);
-				canvas.drawCircle(getCurrentPos().x - (missleRadius / 2), 
-						          getCurrentPos().y - (missleRadius / 2),
-						          missleRadius, bluePaint);
+				canvas.drawCircle(mCurrentPos.x - (missileRadius / 2), 
+								  mCurrentPos.y - (missileRadius / 2),
+						          missileRadius, bluePaint);
 			}
 			break;
 			
 			case GameObject.STATE_DYING:
 			{
 				Paint redPaint = new Paint();
-				redPaint.setAntiAlias(true);
-				redPaint.setARGB(255, 255, 0, 0);
-				canvas.drawCircle(getCurrentPos().x - (mExplosionRadius / 2), 
-						          getCurrentPos().y - (mExplosionRadius / 2),
-						          mExplosionRadius, redPaint);
 				
-				this.setState (GameObject.STATE_DEAD);
-			}	
+				redPaint.setAntiAlias(true);
+		        redPaint.setARGB(255, 0, 0, 255);
+				canvas.drawCircle(mCurrentPos.x, 
+								  mCurrentPos.y,
+								  mExplosionRadius, redPaint);
+			}
 			break;
 			
 			case GameObject.STATE_DEAD:
@@ -54,5 +68,5 @@ public class GameMissile extends GameObject {
 				break;
 		}
 	}
-
-}
+	
+} //End of class GameMissile

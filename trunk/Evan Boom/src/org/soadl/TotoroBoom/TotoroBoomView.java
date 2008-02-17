@@ -12,7 +12,9 @@ import android.view.View;
 
 public class TotoroBoomView extends View {
 
-	private Vector<GameMissile> mEnemiesList;
+	private Vector<GameMissile> mEnemyMissiles; //Enemy GameMissile objects
+	private Vector<GameMissile> mFriendsList; //Friendly GameMissile objects
+	
 	private double mLastDrawTime;
 	private int mFramesDrawn;
 	private String mFpsString;
@@ -20,14 +22,14 @@ public class TotoroBoomView extends View {
 	public TotoroBoomView(Context context, AttributeSet attrs, Map inflateParams) {
         super(context, attrs, inflateParams);
         
-        GameMissile m1 = new GameMissile(6);
+        GameMissile m1 = new GameMissileNormal(30);
         m1.setCurrentPos(new PointF(80, 60));
         m1.setStartingPos (new PointF (80, 60));
         m1.setVelocity (5);
         m1.setTargetPos (new PointF (0, 120));
         m1.setState (GameObject.STATE_ALIVE);
        
-        GameMissile m2 = new GameMissile(6);
+        GameMissile m2 = new GameMissileNormal(30);
         m2.setCurrentPos(new PointF(20,80));
         m2.setStartingPos (new PointF(20,80));
         m2.setVelocity (10);
@@ -39,9 +41,11 @@ public class TotoroBoomView extends View {
         m1.setMotionSolver(ms1);
         m2.setMotionSolver(ms1);
         
-        mEnemiesList = new Vector<GameMissile>();
-        mEnemiesList.add(m1);
-        mEnemiesList.add(m2);
+        mEnemyMissiles = new Vector<GameMissile> ();
+        mFriendsList = new Vector<GameMissile> ();
+        
+        mEnemyMissiles.add(m1);
+        mEnemyMissiles.add(m2);
         mLastDrawTime = System.currentTimeMillis();
         mFramesDrawn = 0;
 	}
@@ -60,7 +64,7 @@ public class TotoroBoomView extends View {
         Paint fpsPaint = new Paint();
         fpsPaint.setAntiAlias(true);
         
-        updateEnemies();
+        updateProjectiles();
         drawEnemies(canvas);
         
         double now = System.currentTimeMillis();
@@ -80,18 +84,92 @@ public class TotoroBoomView extends View {
         
 	}
 	
-	protected void updateEnemies()
+	private void updateProjectiles()
 	{
-		for(GameObject o: mEnemiesList)
+		for (int i = 0; i < mEnemyMissiles.size (); i++)
 		{
-			o.getMotionSolver().solveMotion(o);
+			GameObject o = mEnemyMissiles.get (i);
+			MotionSolver ms = o.getMotionSolver ();
+			ExplosionUpdater eu = o.getExplosionUpdater ();
+			
+			//Update positions and explosions
+			switch (o.mState)
+			{
+				case GameObject.STATE_LARVAL:
+				case GameObject.STATE_ALIVE:
+					if (ms != null)
+					{
+						ms.solveMotion (o);
+					}
+					break;
+					
+				case GameObject.STATE_DYING:
+					if (eu != null)
+					{
+						eu.updateExplosion (o.mExplosion);
+					}
+					break;
+					
+				case GameObject.STATE_DEAD:
+					//Verify each child is dead as well
+					Vector<GameObject> children = o.getChildren ();
+					
+					//If an object has no children, just remove it
+					if (children != null)
+					{
+						boolean cleanUp = true;
+						
+						for (int j = 0; j < children.size (); j++)
+						{
+							GameObject child = children.get (j);
+							
+							if (child.getState () == GameObject.STATE_DEAD)
+							{
+								children.remove (child);
+								j--;
+							}
+							else
+							{
+								cleanUp = false;
+							}
+						}
+						
+						if (cleanUp)
+						{
+							mEnemyMissiles.remove (o);
+							i--;
+						}
+					}
+					else
+					{
+						mEnemyMissiles.remove (o);
+						i--;
+					}
+					break;
+			}
+			
+			//Collision detection
+			
 		}
 	}
-	protected void drawEnemies(Canvas canvas)
+	
+	private void drawEnemies(Canvas canvas)
 	{
-		for(GameObject o : mEnemiesList)
+		for(GameObject o : mEnemyMissiles)
 		{
 			o.draw (canvas);
 		}	
 	}
-}
+	
+	//TODO: Need to figure out all objects affected...
+	//maybe missiles and GameBase types separately?
+//	private Vector<GameMissile> getMissilesInRange (GameMissile explodingMissile,
+//												    Vector<GameMissile> missileList)
+//	{
+//	}
+//	
+//	private Vector<GameBase> getBasesInRange (GameMissile explodingMissile,
+//											  Vector<GameBase> baseList)
+//	{
+//	}
+} //End of class TotoroBoomView

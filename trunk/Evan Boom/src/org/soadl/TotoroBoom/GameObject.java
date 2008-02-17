@@ -3,6 +3,7 @@ package org.soadl.TotoroBoom;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import java.util.Vector;
 
 public abstract class GameObject {
 	// Game object states are done using a constant rather than an Enum.
@@ -13,39 +14,47 @@ public abstract class GameObject {
 	public static final int STATE_DEAD   = 4; // Object life complete.  May be GC'd
 	
 	// Physics objects - where are we, where are we going, how fast are we getting there
-	private PointF mStartingPos;
-	private PointF mCurrentPos;
-	private PointF mTargetPos;
-	private int mVelocity;
+	protected PointF mCurrentPos;
+	protected PointF mStartingPos;
+	protected PointF mTargetPos;
+	protected int mVelocity;
 	
-	public static final int VELOCITY_MAX = 100;
-	public static final int VELOCITY_MIN = 0;
 	
 	// Game rule objects
-	private int mPointsAward; // How many points for killing this thing.  Negative penalties apply
-	private int mHitPoints;   // How hard to kill this thing.  Should be >0.
+	protected int mPointsAward; // How many points for killing this thing.  Negative penalties apply
+	protected int mHitPoints;   // How hard to kill this thing.  Should be >0.
 
 	// The state of this object
-	private int mState;
+	protected int mState;
 	
 	// Parent/child relationships.
 	// For example, a shield may have a missile as its child, indicating the dependency between
 	// the two.  Physics updates are pushed from parent to children.
+	protected GameObject mParent;
+	protected Vector<GameObject> mChildren;
+		
+	protected Drawable mDrawable; // The graphic asset associated with this object.
 	
-	private GameObject mParent;
-	// TODO find some list type to use.
-	// TODO if a MIRV exists as children in a container, how do the child missiles get
-	//      promoted to the main list when the container 'opens?'  Does this even need to happen
+	protected MotionSolver mMotionSolver; // The motion solver for this object
 	
-	private Drawable mDrawable; // The graphic asset associated with this object.
-	
-	private MotionSolver mMotionSolver; // The motion solver for this object
+	protected Explosion mExplosion;
+	protected ExplosionUpdater mExplosionUpdater;
 	
 	public GameObject()
 	{
 		mState = STATE_LARVAL;
+		mParent = null;
 	}
 
+
+	public PointF getCurrentPos() {
+		return mCurrentPos;
+	}
+
+	public void setCurrentPos(PointF currentPos) {
+		mCurrentPos = currentPos;
+	}
+	
 	public PointF getStartingPos ()
 	{
 		return mStartingPos;
@@ -56,14 +65,6 @@ public abstract class GameObject {
 		mStartingPos = startingPosition;
 	}
 	
-	public PointF getCurrentPos() {
-		return mCurrentPos;
-	}
-
-	public void setCurrentPos(PointF currentPos) {
-		mCurrentPos = currentPos;
-	}
-
 	public PointF getTargetPos() {
 		return mTargetPos;
 	}
@@ -75,14 +76,14 @@ public abstract class GameObject {
 	public int getVelocity() {
 		return mVelocity;
 	}
-
+	
 	public void setVelocity(int velocity) {
-		if (velocity > VELOCITY_MIN && velocity < VELOCITY_MAX)
+		if (velocity > Physics.VELOCITY_MIN && velocity < Physics.VELOCITY_MAX)
 			mVelocity = velocity;
-		else if (velocity > VELOCITY_MAX)
-			mVelocity = VELOCITY_MAX;
+		else if (velocity > Physics.VELOCITY_MAX)
+			mVelocity = Physics.VELOCITY_MAX;
 		else 
-			mVelocity = VELOCITY_MIN;
+			mVelocity = Physics.VELOCITY_MIN;
 	}
 
 	public int getPointsAwarded() {
@@ -116,6 +117,22 @@ public abstract class GameObject {
 	public void setParent(GameObject parent) {
 		mParent = parent;
 	}
+	
+	public void addChild (GameObject child)
+	{
+		if (mChildren == null)
+		{
+			mChildren = new Vector<GameObject> ();
+		}
+		
+		mChildren.add (child);
+		child.setParent (this);
+	}
+	
+	public Vector<GameObject> getChildren ()
+	{
+		return mChildren;
+	}
 
 	public Drawable getDrawable() {
 		return mDrawable;
@@ -126,7 +143,7 @@ public abstract class GameObject {
 	}
 
 	abstract public void draw(Canvas canvas);
-
+	
 	public MotionSolver getMotionSolver() {
 		return mMotionSolver;
 	}
@@ -134,6 +151,14 @@ public abstract class GameObject {
 	public void setMotionSolver(MotionSolver motionSolver) {
 		mMotionSolver = motionSolver;
 	}
-
 	
-}
+	public ExplosionUpdater getExplosionUpdater ()
+	{
+		return mExplosionUpdater;
+	}
+	
+	public void setExplosionSolver (ExplosionUpdater explosionUpdater)
+	{
+		mExplosionUpdater = explosionUpdater;
+	}
+} //End of class GameObject
