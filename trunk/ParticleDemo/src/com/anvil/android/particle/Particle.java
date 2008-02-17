@@ -27,7 +27,6 @@ class Particle {
 	public Particle(ParticleEmitter emitter, int numSegments) {
 		this.emitter = emitter;
 		this.numSegments = numSegments;
-		this.radius = 3.0f;
 		this.color = new GLColor(0.0f, 0.0f, 0.0f);
         
 		this.stepSize = (int)(SinTable.TABLE_SIZE/numSegments);

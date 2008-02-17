@@ -56,7 +56,7 @@ class ParticleEmitter {
 		particle.decay = 1.0f / (float)particle.lifetime;
 		particle.x = x;
 		particle.y = y;
-		particle.setRadius(3.0f);
+		particle.setRadius(2.0f);
 		//particle.randomness = randomness;
 		//particle.size = size;
 		
