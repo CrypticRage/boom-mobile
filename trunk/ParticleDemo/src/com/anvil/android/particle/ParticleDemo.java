@@ -14,8 +14,6 @@ import java.lang.String;
 
 public class ParticleDemo extends Activity {
 	
-    private ImageView mImageView;
-    private SurfaceView mSurView;
     private SampleView mSampView;
     
     private TextView mTextView;
@@ -50,7 +48,6 @@ public class ParticleDemo extends Activity {
 	    private ParticleEmitter[] emitters;
 	    private StopWatch watch;
 	    private boolean watchEn = false;
-	    private int frame;	    
 
 	    private int testAlpha;
 	    private int alphaCount;
@@ -61,16 +58,13 @@ public class ParticleDemo extends Activity {
 	        watch = new StopWatch();
 	        mPaint = new Paint();
 	        Random rand = new Random();
-	        frame = 0;
 	        emitters = new ParticleEmitter[5];
 	        for (int i = 0; i < emitters.length; i++)
 	        {
 	        	emitters[i] = new ParticleEmitter(
-	        			60,
+	        			20,
 	        			rand.nextFloat() * 480,
-	        			rand.nextFloat() * 100,
-	        			10.0f,
-	        			10.0f
+	        			rand.nextFloat() * 100
 	        	);
 	        }       
 	    

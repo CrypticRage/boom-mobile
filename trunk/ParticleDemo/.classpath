@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/Applications/android/android.jar">
+	<classpathentry kind="lib" path="C:/android/android.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/Applications/android/docs/reference"/>
+			<attribute name="javadoc_location" value="file:/C:/android/docs/reference"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
