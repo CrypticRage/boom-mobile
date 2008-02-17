@@ -15,15 +15,19 @@ public class LineSolver extends MotionSolver {
 		double expVertDistTravel = 0, expHorizDistTravel = 0;
 		double angle = 0;
 		double forceX = 0, forceY = 0;
+		int objectState = object.getState (); 
 		
-		if (object.getState () == GameObject.STATE_LARVAL || object.getState () == GameObject.STATE_ALIVE)
+		if (objectState == GameObject.STATE_LARVAL || 
+			objectState == GameObject.STATE_ALIVE)
 		{
+			int objectVelocity = object.getVelocity ();
+			
 			//If two points are not horizontal or vertical
 			if ((targetPos.y != startingPos.y) && (targetPos.x != startingPos.x))
 			{
-				angle = (float) Math.atan ((targetPos.y - startingPos.y) / (targetPos.x - startingPos.x));
-				forceX = Math.cos (angle) * object.getVelocity ();
-				forceY = Math.sin (angle) * object.getVelocity ();
+				angle = Math.atan ((targetPos.y - startingPos.y) / (targetPos.x - startingPos.x));
+				forceX = Math.cos (angle) * objectVelocity;
+				forceY = Math.sin (angle) * objectVelocity;
 				
 				if (targetPos.x > curPos.x)
 				{
@@ -41,11 +45,11 @@ public class LineSolver extends MotionSolver {
 			{
 				if (targetPos.x == startingPos.x)
 				{
-					nextPos.y = curPos.y + object.getVelocity ();
+					nextPos.y = curPos.y + objectVelocity;
 				}
 				else
 				{
-					nextPos.x = curPos.x + object.getVelocity ();
+					nextPos.x = curPos.x + objectVelocity;
 				}
 			}
 	
@@ -67,5 +71,5 @@ public class LineSolver extends MotionSolver {
 				object.setState (GameObject.STATE_DYING);
 			}
 		}
-	}
-}
+	} //End of method solveMotion
+}//End of class LineSolver
