@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent" android:layout_height="fill_parent"> 
-    <org.soadl.TotoroBoom.TotoroBoomView id="@+id/totoroboom" android:layout_width="fill_parent" android:layout_height="fill_parent"/>
+    <org.soadl.TotoroBoom.TotoroBoomView android:id="@+id/totoroboom" android:layout_width="fill_parent" android:layout_height="fill_parent"/>
 </FrameLayout>
 
