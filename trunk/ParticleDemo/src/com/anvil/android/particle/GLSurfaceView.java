@@ -222,7 +222,7 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 	        else {
 	        	watch.stop();
 	        	float fps = 1.0f / (float)(watch.getElapsedTime());
-	        	fpsView.setText("Test");
+	        	//fpsView.setText("Test");
 	        	watchEn = false;
 	        }
         }
