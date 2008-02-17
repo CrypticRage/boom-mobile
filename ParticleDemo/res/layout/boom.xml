@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-	
-	<view class="com.anvil.android.particle.GLSurfaceView"/>
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="1">
+
+	<com.anvil.android.particle.GLSurfaceView
+    	android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+                
+	<TextView android:id="@+id/fpsmeter"
+      	android:layout_width="fill_parent" android:layout_height="wrap_content"
+       	android:textAlign="center"
+       	android:textColor="#ffffffff"
+       	android:text="FPS Meter"
+       	/>
+       		                           	       
+</FrameLayout>
 
 </LinearLayout>
-
 
 

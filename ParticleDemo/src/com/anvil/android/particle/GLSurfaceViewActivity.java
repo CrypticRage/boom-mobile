@@ -26,6 +26,8 @@ import android.view.WindowManager;
  * that uses OpenGL drawing into a dedicated surface.
  */
 public class GLSurfaceViewActivity extends Activity {    
+    //private GLSurfaceView mGLSurfaceView;	
+	
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -39,8 +41,9 @@ public class GLSurfaceViewActivity extends Activity {
         
         // Create our Preview view and set it as the content of our
         // Activity
-        mGLSurfaceView = new GLSurfaceView(this);
-        setContentView(mGLSurfaceView);
+        //mGLSurfaceView = new GLSurfaceView(this);
+        //setContentView(mGLSurfaceView);
+        setContentView(R.layout.boom);
     }
     
     @Override
@@ -56,6 +59,4 @@ public class GLSurfaceViewActivity extends Activity {
         // to take appropriate action when the activity looses focus
         super.onPause();
     }
-
-    private GLSurfaceView mGLSurfaceView;
 }

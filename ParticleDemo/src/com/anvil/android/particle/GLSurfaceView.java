@@ -21,6 +21,7 @@ import android.graphics.OpenGLContext;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 import java.util.Map;
 import java.util.Random;
@@ -74,7 +75,8 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     // ----------------------------------------------------------------------
 
     class GLThread extends Thread {
-        private boolean mDone;
+    	private TextView fpsView;
+    	private boolean mDone;
         private int mWidth;
         private int mHeight;
  
@@ -91,6 +93,8 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
         	mWidth = 0;
         	mHeight = 0;
 
+        	fpsView = (TextView)findViewById(R.id.fpsmeter);
+        	
         	rand = new Random();
         	numEmitters = 1;
         	emitters = new ParticleEmitter[numEmitters];
@@ -196,7 +200,7 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
              * correctly first. The scissor is always specified in window
              * coordinates:
              */
-            gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
             
             
@@ -217,7 +221,8 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 	        }
 	        else {
 	        	watch.stop();
-	        	long elapsed = watch.getElapsedTime();
+	        	float fps = 1.0f / (float)(watch.getElapsedTime());
+	        	fpsView.setText("Test");
 	        	watchEn = false;
 	        }
         }
