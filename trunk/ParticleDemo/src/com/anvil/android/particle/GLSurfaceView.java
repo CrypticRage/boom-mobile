@@ -97,7 +97,7 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 	        for (int i = 0; i < numEmitters; i++)
 	        {
 	        	emitters[i] = new ParticleEmitter(
-	        			1,
+	        			30,
 	        			480.0f*0.1f,
 	        			320.0f*0.1f
 	        	);
