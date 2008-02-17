@@ -10,9 +10,9 @@ class ParticleEmitter {
 	public float spread = 90;
 	//public float gravity = (1 << 8);
 	public int lifetime = 100;
-	public float scatter = 5.5f;
-	public float hscatter = 4.6f;
-	public float vscatter = 4.6f;
+	public float scatter = 4.5f;
+	public float hscatter = 2.6f;
+	public float vscatter = 2.6f;
 	public float x;
 	public float y;
 	public float speed = 1.0f;
@@ -51,8 +51,9 @@ class ParticleEmitter {
 		particle.color.green = 0.7f;
 		particle.color.blue = 0.7f;
 		particle.color.alpha = 1.0f;
+		//particle.lifetime = this.lifetime;
 		particle.lifetime = (int)(Math.random()*this.lifetime) + 1;
-		particle.decay = (float)1.0f/lifetime;
+		particle.decay = 1.0f / (float)particle.lifetime;
 		particle.x = x;
 		particle.y = y;
 		particle.setRadius(3.0f);
@@ -89,7 +90,6 @@ class ParticleEmitter {
 			}
 			if (p.color.alpha <= 0.0f)
 				p.color.alpha = 0.0f;
-				p.lifetime = -1;
 		}
 	}
 	
