@@ -22,6 +22,7 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
+import android.app.Activity;
 
 import java.util.Map;
 import java.util.Random;
@@ -36,19 +37,23 @@ import javax.microedition.khronos.opengles.GL10;
 class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     SurfaceHolder mHolder;
     private GLThread mGLThread;
+    public TextView fpsView;
 
     GLSurfaceView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public GLSurfaceView(Context context, AttributeSet attrs, Map inflateParams) {
         super(context, attrs, inflateParams);
-        init();
+        init(context);
     }
     
-    private void init() {
-        // Install a SurfaceHolder.Callback so we get notified when the
+    private void init(Context context) {
+        Activity temp = (Activity)context;
+    	fpsView = (TextView)(temp.findViewById(R.id.fpsmeter));
+        
+    	// Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed 
         mHolder = getHolder();
         mHolder.addCallback(this);
@@ -56,7 +61,7 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     
     public void surfaceCreated(SurfaceHolder holder) {
         // The Surface has been created, start our drawing thread.
-        mGLThread = new GLThread();
+        mGLThread = new GLThread(fpsView);
         mGLThread.start();
     }
 
@@ -87,13 +92,13 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
         private int numEmitters;
         private ParticleEmitter[] emitters;
         
-        GLThread() {
+        GLThread(TextView fpsView) {
         	super();
         	mDone = false;
         	mWidth = 0;
         	mHeight = 0;
-
-        	fpsView = (TextView)findViewById(R.id.fpsmeter);
+        	
+        	this.fpsView = fpsView;
         	
         	rand = new Random();
         	numEmitters = 1;
@@ -222,7 +227,8 @@ class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 	        else {
 	        	watch.stop();
 	        	float fps = 1.0f / (float)(watch.getElapsedTime());
-	        	//fpsView.setText("Test");
+	        	if (fpsView != null)
+	        		fpsView.setText("Test");
 	        	watchEn = false;
 	        }
         }
