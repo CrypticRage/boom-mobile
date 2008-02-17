@@ -1,17 +1,18 @@
 package com.anvil.android.particle;
 
-import android.graphics.Color;
+import javax.microedition.khronos.opengles.GL10;
 
 class ParticleEmitter {
 	public Particle[] particles;
+	
 	public float rate = 100;
 	public int angle = 0;	// 0 degrees is north
 	public float spread = 90;
 	//public float gravity = (1 << 8);
-	public int lifetime = 85;
-	public float scatter = 2.5f;
-	public float hscatter = 2.6f;
-	public float vscatter = 2.6f;
+	public int lifetime = 100;
+	public float scatter = 5.5f;
+	public float hscatter = 4.6f;
+	public float vscatter = 4.6f;
 	public float x;
 	public float y;
 	public float speed = 1.0f;
@@ -21,31 +22,18 @@ class ParticleEmitter {
 	public float speedVariation = 0;
 	//public int decay = 1;
 	//public int randomness = (7 << 8);
-	public int color;
-	public float numParticles;
+	public GLColor color;
+	public int numParticles;
 	
-	private static float[] sinTable, cosTable;
-	private Particle p;
-	
-	static {
-		sinTable = new float[360];
-		cosTable = new float[360];
-		for (int i = 0; i < 360; i++) {
-			double angle = 2*Math.PI*i/360;
-			sinTable[i] = (float)(Math.sin(angle));
-			cosTable[i] = (float)(Math.cos(angle));
-		}
-	}
-
-	public ParticleEmitter(int numParticles, float x, float y, float width, float height) {
+	public ParticleEmitter(int numParticles, float x, float y) {
 		this.numParticles = numParticles;
 		this.x = x;
 		this.y = y;
-		this.width = width;
-		this.height = height;
+		this.color = new GLColor(1.0f, 0.0f, 0.0f);
+		
 		particles = new Particle[numParticles];
 		for (int i = 0; i < numParticles; i++) {
-			particles[i] = new Particle(this);
+			particles[i] = new Particle(this, 10);
 			newParticle(particles[i]);
 		}
 	}
@@ -59,18 +47,23 @@ class ParticleEmitter {
 	}
 	
 	public void newParticle(Particle particle) {
-		particle.color = Color.GRAY;
-		particle.size = size;
-		particle.lifetime = (int)(Math.random()*lifetime);
-		particle.decay = particle.lifetime;
+		particle.color.red = 0.7f;
+		particle.color.green = 0.7f;
+		particle.color.blue = 0.7f;
+		particle.color.alpha = 1.0f;
+		particle.lifetime = (int)(Math.random()*this.lifetime) + 1;
+		particle.decay = (float)1.0f/lifetime;
 		particle.x = x;
 		particle.y = y;
+		particle.setRadius(3.0f);
 		//particle.randomness = randomness;
+		//particle.size = size;
+		
 		if (scatter != 0) {
-			int a = ((int)(Math.random() * 360)) % 360;
+			int a = ((int)(Math.random() * SinTable.TABLE_SIZE)) % SinTable.TABLE_SIZE;
 			double distance = scatter * Math.random();
-			particle.x += (cosTable[a] * distance);
-			particle.y += (-sinTable[a] * distance);
+			particle.x += (CosTable.value[a] * distance);
+			particle.y += (-SinTable.value[a] * distance);
 		}
 		if (hscatter != 0)
 			particle.x += (hscatter * (Math.random()-0.5f));
@@ -82,19 +75,34 @@ class ParticleEmitter {
 	}
 	
 	public void update() {
-		for (int i = 0; i < particles.length; i++) {
-			p = particles[i];
+		for (int i = 0; i < numParticles; i++) {
+			Particle p = particles[i];
+			float rad = p.getRadius();
+			
 			if (p.lifetime < 0) {
 				newParticle(p);
 			}
 			p.move(width, height);		
-			p.color -= (p.decay << 24);
-			if (p.size < 5.0f) {
-				p.size += .12f;
+			p.color.alpha -= p.decay;
+			if (rad < 5.0f) {
+				p.setRadius(rad + .02f);
 			}
-			if (Color.alpha(p.color) <= 0)
-				p.color = Color.TRANSPARENT;
+			if (p.color.alpha <= 0.0f)
+				p.color.alpha = 0.0f;
+				p.lifetime = -1;
 		}
+	}
+	
+	public void draw(GL10 gl) {
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        //gl.glLoadIdentity();
+        //gl.glTranslatef(x, y, 0);
+
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+        
+        for (int i = 0; i < numParticles; i++) {
+        	particles[i].draw(gl);
+        }
 	}
 	
 	public String toString() {
