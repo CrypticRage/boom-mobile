@@ -5,18 +5,27 @@ public class GameMissileShrapnel extends GameMissile {
 
 	public GameMissileShrapnel()
 	{
-		mExplosionRadius = 0;
-		mProximityRadius = 1;
+		super ();
 	}
 	
-	public GameMissileShrapnel (int radius)
+	public GameMissileShrapnel (int radius, float startingX, float startingY)
 	{
-		mExplosionRadius = radius;
-		mProximityRadius = 2;
+		super (radius, startingX, startingY);
 	}
 	
 	@Override
 	public void createExplosion ()
 	{
+		mState = GameObject.STATE_DEAD;
+		
+		mExplosion = new ShrapnelExplosion (mCurrentPos.x,
+											mCurrentPos.y,
+											mExplosionRadius,
+											ShrapnelExplosion.DEFAULT_SHRAPNEL_EXPLOSION_VELOCITY,
+											this);
+		
+		//Shrapnel explosions don't have their own explosion updater, because 
+		//their movement updates are called by the updateProjectiles method 
+		mExplosionUpdater = null;
 	}
 } //End of class GameMissileShrapnel

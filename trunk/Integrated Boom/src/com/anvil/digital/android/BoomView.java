@@ -2,28 +2,22 @@ package com.anvil.digital.android;
 
 import java.util.Map;
 import java.util.Random;
-import java.util.Vector;
-
+import java.util.ArrayList;
 import javax.microedition.khronos.opengles.GL10;
-
 import com.anvil.digital.android.logic.*;
 import com.anvil.digital.android.graphics.*;
-
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.OpenGLContext;
-import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.TextView;
+
 
 public class BoomView extends SurfaceView implements SurfaceHolder.Callback {
 
-	private Vector<GameMissile> mEnemyMissiles; //Enemy GameMissile objects
-	private Vector<GameMissile> mFriendsList; //Friendly GameMissile objects
+	private ArrayList<GameObject> mMissiles; //GameMissile objects
+	private ArrayList<GameBase> mBases; //Friendly GameBase objects
 
 	
     private GLThread mGLThread;
@@ -31,7 +25,7 @@ public class BoomView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	
     class GLThread extends Thread {
-    	private TextView fpsView;
+//    	private TextView fpsView;
     	private boolean mDone;
         private int mWidth;
         private int mHeight;
@@ -39,9 +33,6 @@ public class BoomView extends SurfaceView implements SurfaceHolder.Callback {
         private StopWatch watch;
     	private boolean watchEn; 
     	Random rand;
-    	
-        private int numEmitters;
-        private ParticleEmitter[] emitters;
         
         GLThread() {
         	super();
@@ -52,8 +43,6 @@ public class BoomView extends SurfaceView implements SurfaceHolder.Callback {
 //        	fpsView = (TextView)findViewById(R.id.fpsmeter);
         	
         	rand = new Random();
-        	numEmitters = 1;
-        	emitters = new ParticleEmitter[numEmitters];
 	        
         	watch = new StopWatch();
         	watchEn = false;	
@@ -87,27 +76,18 @@ public class BoomView extends SurfaceView implements SurfaceHolder.Callback {
              */
             gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
              
-			GameMissile m1 = new GameMissileNormal(30);
-			m1.setCurrentPos(new PointF(80, 60));
-			m1.setStartingPos (new PointF (80, 60));
-			m1.setVelocity (5);
+			GameMissile m1 = new GameMissileShrapnel (30, 80, 60);
+			m1.setVelocity (500);
 			m1.setTargetPos (new PointF (240, 160));
 			m1.setState (GameObject.STATE_ALIVE);
 			
-        	emitters[0] = new ParticleEmitter(
-        			30,
-        			80f,
-        			60f
-        	);
-			
 			MotionSolver ms1 = new LineSolver ();
-			 
 			m1.setMotionSolver(ms1);
 			 
-			mEnemyMissiles = new Vector<GameMissile> ();
-			mFriendsList = new Vector<GameMissile> ();
-			 
-			mEnemyMissiles.add(m1);
+			mMissiles = new ArrayList<GameObject> ();
+			mBases = new ArrayList<GameBase> ();
+
+			mMissiles.add (m1);
 
 
             // This is our main acquisition thread's loop, we go until
@@ -120,7 +100,7 @@ public class BoomView extends SurfaceView implements SurfaceHolder.Callback {
                     h = mHeight;
                 }
 
-                updateProjectiles(emitters);
+                updateProjectiles();
                 
                 /* draw a frame here */
                 drawFrame(gl, w, h);
@@ -139,7 +119,7 @@ public class BoomView extends SurfaceView implements SurfaceHolder.Callback {
         
             /*
              * Set our projection matrix. This doesn't have to be done
-             * each time we draw, but usualy a new projection needs to be set
+             * each time we draw, but usually a new projection needs to be set
              * when the viewport is resized.
              */
 
@@ -177,20 +157,23 @@ public class BoomView extends SurfaceView implements SurfaceHolder.Callback {
             
             
             /* Draw Particle Emitters */
-	        for (int i = 0; i < emitters.length; i++)
-	        { 
-	        	emitters[i].update();
-	        	emitters[i].draw(gl);
-	        }
+            for (int i = 0; i < mMissiles.size (); i++)
+    		{
+    			GameMissile m = (GameMissile) mMissiles.get (i);
+    			ParticleEmitter emitter = m.getParticleEmitter ();
+    			
+    			emitter.update ();
+    			emitter.draw (gl);
+    		}
             
-	        /* Stopwatch */
+	        /* Stop watch */
 	        if (!watchEn) {
 	        	watch.start();
 	        	watchEn = true;
 	        }
 	        else {
 	        	watch.stop();
-	        	float fps = 1.0f / (float)(watch.getElapsedTime());
+//	        	float fps = 1.0f / (float)(watch.getElapsedTime());
 	        	//fpsView.setText("Test");
 	        	watchEn = false;
 	        }
@@ -240,47 +223,116 @@ public class BoomView extends SurfaceView implements SurfaceHolder.Callback {
 //        invalidate();
 //	}
 	
-	private void updateProjectiles(ParticleEmitter[] emitters)
+	private void updateProjectiles()
 	{
-		for (int i = 0; i < mEnemyMissiles.size (); i++)
+		for (int i = 0; i < mMissiles.size (); i++)
 		{
-			GameObject o = mEnemyMissiles.get (i);
-			MotionSolver ms = o.getMotionSolver ();
-			ExplosionUpdater eu = o.getExplosionUpdater ();
-			ParticleEmitter emitter = emitters [i];
+			GameMissile m = (GameMissile) mMissiles.get (i);
+			MotionSolver ms = m.getMotionSolver ();
+			ExplosionUpdater eu = m.getExplosionUpdater ();
 			
 			//Update positions and explosions
-			switch (o.getState ())
+			switch (m.getState ())
 			{
 				case GameObject.STATE_LARVAL:
 				case GameObject.STATE_ALIVE:
 					if (ms != null)
 					{
-						ms.solveMotion (o);
-						PointF currentPos = o.getCurrentPos ();
-						
-						emitter.x = currentPos.x;
-						emitter.y = currentPos.y;
+						ms.solveMotion (m, 1000);
 					}
 					
-					if (o.getState () == GameObject.STATE_DYING)
+					for (int j = 0; j < mMissiles.size (); j++)
 					{
-						o.createExplosion ();
+						GameMissile otherMissile = (GameMissile) mMissiles.get (j);
 						
-						//Remove emitter from emitters
+						//If we're not dealing with the same object
+						if (m != otherMissile)
+						{
+							//Calculate the distance between the current missile
+							//and the second one
+							PointF mCurrentPos = m.getCurrentPos ();
+							PointF otherCurrentPos = otherMissile.getCurrentPos ();
+							double distance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
+							
+							//We just smacked into something
+							if (distance <= m.getProximityRadius ())
+							{
+								m.setState (GameObject.STATE_DYING);
+								
+								//Don't want to re-activate a dead object
+								if (otherMissile.getState () != GameObject.STATE_DEAD)
+								{
+									otherMissile.setState (GameObject.STATE_DYING);
+								}
+							}
+						}
 					}
 					break;
 					
 				case GameObject.STATE_DYING:
-					if (eu != null)
+					Explosion exp = m.getExplosion ();
+					
+					//Important to only have one explosion creation point
+					//since we're setting the state to DYING in multiple places
+					if (exp == null)
 					{
-						eu.updateExplosion (o.getExplosion ());
+						m.createExplosion ();
+						eu = m.getExplosionUpdater ();
+						
+						//If this is a shrapnel-type missile, 
+						if (m instanceof GameMissileShrapnel)
+						{
+							ArrayList <GameObject> shrapnelChildren = m.getChildren ();
+							
+							mMissiles.addAll (shrapnelChildren);
+						}
+					}
+					//Don't want to update an explosion if we just created it
+					else
+					{
+						if (eu != null)
+						{
+							eu.updateExplosion (exp);
+						}
+					}
+					
+					for (int j = 0; j < mMissiles.size (); j++)
+					{
+						GameObject otherMissile = mMissiles.get (j);
+
+						//If we're not dealing with the same object
+						if (m != otherMissile)
+						{
+							//Calculate the distance between the current missile
+							//and the second one
+							PointF mCurrentPos = m.getCurrentPos ();
+							PointF otherCurrentPos = otherMissile.getCurrentPos ();
+							double coreDistance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
+							Explosion e = m.getExplosion ();
+							
+							if (e instanceof WaveExplosion)
+							{
+								WaveExplosion wave = (WaveExplosion) e;
+
+								//Our wave explosion hit something
+								if (coreDistance <= wave.getCurrentRadius ())
+								{
+									//Don't want to re-activate a dead object
+									if (otherMissile.getState () != GameObject.STATE_DEAD)
+									{
+										otherMissile.setState (GameObject.STATE_DYING);
+									}
+								}
+							}
+							
+							//TODO: Add code for shrapnel type explosion
+						}
 					}
 					break;
 					
 				case GameObject.STATE_DEAD:
 					//Verify each child is dead as well
-					Vector<GameObject> children = o.getChildren ();
+					ArrayList<GameObject> children = m.getChildren ();
 					
 					//If an object has no children, just remove it
 					if (children != null)
@@ -304,32 +356,29 @@ public class BoomView extends SurfaceView implements SurfaceHolder.Callback {
 						
 						if (cleanUp)
 						{
-							mEnemyMissiles.remove (o);
+							mMissiles.remove (m);
 							i--;
 						}
 					}
 					else
 					{
-						mEnemyMissiles.remove (o);
+						mMissiles.remove (m);
 						i--;
 					}
 					break;
-			}
-			
-			//Collision detection
-			
-		}
+			} //End of switch			
+		} //End of for loop
 	}
 	
 	//TODO: Need to figure out all objects affected...
 	//maybe missiles and GameBase types separately?
-//	private Vector<GameMissile> getMissilesInRange (GameMissile explodingMissile,
-//												    Vector<GameMissile> missileList)
+//	private ArrayList<GameMissile> getMissilesInRange (GameMissile explodingMissile,
+//												    ArrayList<GameMissile> missileList)
 //	{
 //	}
 //	
-//	private Vector<GameBase> getBasesInRange (GameMissile explodingMissile,
-//											  Vector<GameBase> baseList)
+//	private ArrayList<GameBase> getBasesInRange (GameMissile explodingMissile,
+//											  ArrayList<GameBase> baseList)
 //	{
 //	}
 	

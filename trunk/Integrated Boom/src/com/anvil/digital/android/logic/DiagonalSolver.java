@@ -7,7 +7,7 @@ import android.graphics.PointF;
 public class DiagonalSolver extends MotionSolver {
 
 	@Override
-	public void solveMotion(GameObject object) {
+	public void solveMotion(GameObject object, int timeElapsed) {
 		PointF curPos = object.getCurrentPos();
 		curPos.x+=Math.sqrt(2);
 		curPos.y+=Math.sqrt(2);

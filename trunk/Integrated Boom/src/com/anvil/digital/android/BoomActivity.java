@@ -1,7 +1,6 @@
 package com.anvil.digital.android;
 
 import com.anvil.digital.android.R;
-import com.anvil.digital.android.BoomView;
 
 import android.app.Activity;
 import android.os.Bundle;
