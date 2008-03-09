@@ -56,5 +56,10 @@ public abstract class Explosion {
 			mExplosionVelocity = Physics.VELOCITY_MIN;
 	}
 	
+	public GameMissile getParent ()
+	{
+		return mParent;
+	}
+	
 	public abstract void drawExplosion (Canvas canvas);		//Renders the Explosion on the screen
 } //End of class Explosion

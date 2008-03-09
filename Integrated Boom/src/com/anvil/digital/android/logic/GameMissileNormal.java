@@ -8,18 +8,12 @@ public class GameMissileNormal extends GameMissile {
 
 	public GameMissileNormal()
 	{
-		mExplosionRadius = 0;
-		mProximityRadius = 1;
-		
-		mExplosionUpdater = new WaveExplosionUpdater ();
+		super ();
 	}
 	
-	public GameMissileNormal (int radius)
+	public GameMissileNormal (int radius, float startingX, float startingY)
 	{
-		mExplosionRadius = radius;
-		mProximityRadius = 2;
-		
-		mExplosionUpdater = new WaveExplosionUpdater ();
+		super (radius, startingX, startingY);
 	}
 	
 	@Override
@@ -29,6 +23,8 @@ public class GameMissileNormal extends GameMissile {
 				   mExplosionRadius, 
 				   WaveExplosion.DEFAULT_WAVE_EXPLOSION_VELOCITY,
 				   this);
+		
+		mExplosionUpdater = new WaveExplosionUpdater ();
 	}
 	
 	@Override

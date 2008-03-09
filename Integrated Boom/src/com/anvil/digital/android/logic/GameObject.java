@@ -3,7 +3,7 @@ package com.anvil.digital.android.logic;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public abstract class GameObject {
 	// Game object states are done using a constant rather than an Enum.
@@ -17,7 +17,7 @@ public abstract class GameObject {
 	protected PointF mCurrentPos;
 	protected PointF mStartingPos;
 	protected PointF mTargetPos;
-	protected int mVelocity;
+	protected int mVelocity;					//Number of pixels per second
 	
 	
 	// Game rule objects
@@ -31,7 +31,7 @@ public abstract class GameObject {
 	// For example, a shield may have a missile as its child, indicating the dependency between
 	// the two.  Physics updates are pushed from parent to children.
 	protected GameObject mParent;
-	protected Vector<GameObject> mChildren;
+	protected ArrayList<GameObject> mChildren;
 		
 	protected Drawable mDrawable; // The graphic asset associated with this object.
 	
@@ -122,14 +122,14 @@ public abstract class GameObject {
 	{
 		if (mChildren == null)
 		{
-			mChildren = new Vector<GameObject> ();
+			mChildren = new ArrayList<GameObject> ();
 		}
 		
 		mChildren.add (child);
 		child.setParent (this);
 	}
 	
-	public Vector<GameObject> getChildren ()
+	public ArrayList<GameObject> getChildren ()
 	{
 		return mChildren;
 	}
