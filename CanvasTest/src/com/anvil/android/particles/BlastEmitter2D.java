@@ -40,7 +40,7 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 			SpriteParticle2D p = (SpriteParticle2D)livePool.get(0);
 			
 			p.currentDecay += time;
-			if (p.currentDecay >= p.decay) {
+			if (p.currentDecay >= p.decay && (p.age >= p.lifetime/2)) {
 				int decayFactor = p.currentDecay / p.decay;
 				p.alpha -= decayFactor;
 				if (p.alpha < 0) {
