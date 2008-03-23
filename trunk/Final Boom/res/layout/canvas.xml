@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+        
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<com.anvil.android.boom.BoomView android:id="@+id/main_canvas"
+    	android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+                      		                           	       
+    <!-- top status bar -->
+    <TextView
+        android:id="@+id/top_status_bar"
+       	android:textAlign="center"
+       	android:textColor="#ff008cb4"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="Top Status Bar"/>
+
+    <!-- bottom status bar -->
+    <TextView
+        android:id="@+id/bottom_status_bar"
+       	android:textAlign="center"
+       	android:textColor="#ff008cb4"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Bottom Status Bar"/>
+
+</RelativeLayout>
+
