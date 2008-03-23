@@ -1,12 +1,17 @@
 package com.anvil.android.boom;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.view.SurfaceHolder;
+import android.view.MotionEvent;
+import android.os.Handler;
+import android.os.Message;
+
 
 import com.anvil.android.boom.logic.Explosion;
 import com.anvil.android.boom.logic.ExplosionUpdater;
@@ -23,6 +28,7 @@ import com.anvil.android.boom.particles.SmokeEmitter2D;
 import com.anvil.android.boom.util.StopWatch;
 
 class CanvasThread extends Thread {
+	private Semaphore mSem;					//Semaphore to protect game object array lists
 	private ArrayList<GameObject> mMissiles; //GameMissile objects
 	private ArrayList<GameBase> mBases; //Friendly GameBase objects
 	
@@ -35,7 +41,59 @@ class CanvasThread extends Thread {
     private StopWatch watch;
 	private int elapsedTime;        
     
-	/* Camera Variables */ 
+	/* Camera Variables */
+	
+	protected MotionEventHandler mMotionEventHandler;
+	
+	private class MotionEventHandler extends Handler
+	{
+		public MotionEventHandler ()
+		{
+			super ();
+		}
+		
+		public void handleMessage (Message msg)
+		{
+			switch (msg.what)
+			{
+				case GlobalData.MOTION_EVENT_TYPE:
+					MotionEvent motionEvent = (MotionEvent) msg.obj;
+					float xCoord = 0, yCoord = 0;
+					
+					xCoord = motionEvent.getX ();
+					yCoord = motionEvent.getY ();
+					
+					GameMissile m1 = new GameMissileNormal (30, 240, 320);
+					m1.setVelocity (50);
+					m1.setTargetPos (new PointF (xCoord, yCoord));
+					m1.setState (GameObject.STATE_ALIVE);
+					
+					//TODO: Do we just want to have some sort of general LineSolver
+					//instead of creating a new Solver for each missile?
+					MotionSolver ms1 = new LineSolver ();
+					m1.setMotionSolver(ms1);
+		
+					try
+					{
+						mSem.acquire ();
+						mMissiles.add (m1);
+						mSem.release ();
+					}
+					catch (InterruptedException e)
+					{
+						System.err.println ("InterruptedException in CanvasThread MotionEventHandler: " + e.getMessage ());
+					}
+					finally
+					{
+						msg.recycle ();
+					}
+					break;
+					
+				default:
+					break;
+			}
+		}
+	}
 	   
     CanvasThread(SurfaceHolder mHolder) {
         super();
@@ -47,6 +105,15 @@ class CanvasThread extends Thread {
     	watch = new StopWatch();
         
         elapsedTime = 0;
+        
+        mMotionEventHandler = new MotionEventHandler ();
+        GlobalData.canvasThreadHandler = mMotionEventHandler;
+        
+        //Initialize game objects
+		mMissiles = new ArrayList<GameObject> ();
+		mBases = new ArrayList<GameBase> ();
+		
+		mSem = new Semaphore (1, true);
     }
 
     @Override
@@ -55,19 +122,6 @@ class CanvasThread extends Thread {
         // asked to quit.
         watch.start();
     	SurfaceHolder holder = mHolder;
-    	
-		GameMissile m1 = new GameMissileNormal (30, 80, 60);
-		m1.setVelocity (50);
-		m1.setTargetPos (new PointF (480, 320));
-		m1.setState (GameObject.STATE_ALIVE);
-		
-		MotionSolver ms1 = new LineSolver ();
-		m1.setMotionSolver(ms1);
-		 
-		mMissiles = new ArrayList<GameObject> ();
-		mBases = new ArrayList<GameBase> ();
-
-		mMissiles.add (m1);
         
         while (!mDone) {       	          	
         	// Lock the surface, this returns a Canvas that can
@@ -114,182 +168,205 @@ class CanvasThread extends Thread {
 
     private void updateProjectiles(int timeElapsed)
 	{
-		for (int i = 0; i < mMissiles.size (); i++)
-		{
-			GameMissile m = (GameMissile) mMissiles.get (i);
-			MotionSolver ms = m.getMotionSolver ();
-			ExplosionUpdater eu = m.getExplosionUpdater ();
-			
-			//Update positions and explosions
-			switch (m.getState ())
-			{
-				case GameObject.STATE_LARVAL:
-				case GameObject.STATE_ALIVE:
-					if (ms != null)
-					{
-						ms.solveMotion (m, timeElapsed);
-					}
-					
-					for (int j = 0; j < mMissiles.size (); j++)
-					{
-						GameMissile otherMissile = (GameMissile) mMissiles.get (j);
-						
-						//If we're not dealing with the same object
-						if (m != otherMissile)
-						{
-							//Calculate the distance between the current missile
-							//and the second one
-							PointF mCurrentPos = m.getCurrentPos ();
-							PointF otherCurrentPos = otherMissile.getCurrentPos ();
-							double distance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
-							
-							//We just smacked into something
-							if (distance <= m.getProximityRadius ())
-							{
-								m.setState (GameObject.STATE_DYING);
-								
-								//Don't want to re-activate a dead object
-								if (otherMissile.getState () != GameObject.STATE_DEAD)
-								{
-									otherMissile.setState (GameObject.STATE_DYING);
-								}
-							}
-						}
-					}
-					break;
-					
-				case GameObject.STATE_DYING:
-					Explosion exp = m.getExplosion ();
-					
-					//Important to only have one explosion creation point
-					//since we're setting the state to DYING in multiple places
-					if (exp == null)
-					{
-						m.createExplosion ();
-						eu = m.getExplosionUpdater ();
-						
-						//If this is a shrapnel-type missile, 
-						if (m instanceof GameMissileShrapnel)
-						{
-							ArrayList <GameObject> shrapnelChildren = m.getChildren ();
-							
-							mMissiles.addAll (shrapnelChildren);
-						}
-					}
-					//Don't want to update an explosion if we just created it
-					else
-					{
-						if (eu != null)
-						{
-							eu.updateExplosion (exp);
-						}
-					}
-					
-					for (int j = 0; j < mMissiles.size (); j++)
-					{
-						GameObject otherMissile = mMissiles.get (j);
-
-						//If we're not dealing with the same object
-						if (m != otherMissile)
-						{
-							//Calculate the distance between the current missile
-							//and the second one
-							PointF mCurrentPos = m.getCurrentPos ();
-							PointF otherCurrentPos = otherMissile.getCurrentPos ();
-							double coreDistance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
-							Explosion e = m.getExplosion ();
-							
-							if (e instanceof WaveExplosion)
-							{
-								WaveExplosion wave = (WaveExplosion) e;
-
-								//Our wave explosion hit something
-								if (coreDistance <= wave.getCurrentRadius ())
-								{
-									//Don't want to re-activate a dead object
-									if (otherMissile.getState () != GameObject.STATE_DEAD)
-									{
-										otherMissile.setState (GameObject.STATE_DYING);
-									}
-								}
-							}
-							
-							//TODO: Add code for shrapnel type explosion
-						}
-					}
-					break;
-					
-				case GameObject.STATE_DEAD:
-					//Verify each child is dead as well
-					ArrayList<GameObject> children = m.getChildren ();
-					
-					//If an object has no children, just remove it
-					if (children != null)
-					{
-						boolean cleanUp = true;
-						
-						for (int j = 0; j < children.size (); j++)
-						{
-							GameObject child = children.get (j);
-							
-							if (child.getState () == GameObject.STATE_DEAD)
-							{
-								children.remove (child);
-								j--;
-							}
-							else
-							{
-								cleanUp = false;
-							}
-						}
-						
-						if (cleanUp)
-						{
-							mMissiles.remove (m);
-							i--;
-						}
-					}
-					else
-					{
-						mMissiles.remove (m);
-						i--;
-					}
-					break;
-			} //End of switch			
-		} //End of for loop
+    	try
+    	{
+    		mSem.acquire ();
+    		
+    		for (int i = 0; i < mMissiles.size (); i++)
+    		{
+    			GameMissile m = (GameMissile) mMissiles.get (i);
+    			MotionSolver ms = m.getMotionSolver ();
+    			ExplosionUpdater eu = m.getExplosionUpdater ();
+    			
+    			//Update positions and explosions
+    			switch (m.getState ())
+    			{
+    				case GameObject.STATE_LARVAL:
+    				case GameObject.STATE_ALIVE:
+    					if (ms != null)
+    					{
+    						ms.solveMotion (m, timeElapsed);
+    					}
+    					
+//    					for (int j = 0; j < mMissiles.size (); j++)
+//    					{
+//    						GameMissile otherMissile = (GameMissile) mMissiles.get (j);
+//    						
+//    						//If we're not dealing with the same object
+//    						if (m != otherMissile)
+//    						{
+//    							//Calculate the distance between the current missile
+//    							//and the second one
+//    							PointF mCurrentPos = m.getCurrentPos ();
+//    							PointF otherCurrentPos = otherMissile.getCurrentPos ();
+//    							double distance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
+//    							
+//    							//We just smacked into something
+//    							if (distance <= m.getProximityRadius ())
+//    							{
+//    								m.setState (GameObject.STATE_DYING);
+//    								
+//    								//Don't want to re-activate a dead object
+//    								if (otherMissile.getState () != GameObject.STATE_DEAD)
+//    								{
+//    									otherMissile.setState (GameObject.STATE_DYING);
+//    								}
+//    							}
+//    						}
+//    					}
+    					break;
+    					
+    				case GameObject.STATE_DYING:
+    					Explosion exp = m.getExplosion ();
+    					
+    					//Important to only have one explosion creation point
+    					//since we're setting the state to DYING in multiple places
+    					if (exp == null)
+    					{
+    						m.createExplosion ();
+    						eu = m.getExplosionUpdater ();
+    						
+    						//If this is a shrapnel-type missile, 
+    						if (m instanceof GameMissileShrapnel)
+    						{
+    							ArrayList <GameObject> shrapnelChildren = m.getChildren ();
+    							
+    							mMissiles.addAll (shrapnelChildren);
+    						}
+    					}
+    					//Don't want to update an explosion if we just created it
+    					else
+    					{
+    						if (eu != null)
+    						{
+    							eu.updateExplosion (exp);
+    						}
+    					}
+    					
+//    					for (int j = 0; j < mMissiles.size (); j++)
+//    					{
+//    						GameObject otherMissile = mMissiles.get (j);
+    //
+//    						//If we're not dealing with the same object
+//    						if (m != otherMissile)
+//    						{
+//    							//Calculate the distance between the current missile
+//    							//and the second one
+//    							PointF mCurrentPos = m.getCurrentPos ();
+//    							PointF otherCurrentPos = otherMissile.getCurrentPos ();
+//    							double coreDistance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
+//    							Explosion e = m.getExplosion ();
+//    							
+//    							if (e instanceof WaveExplosion)
+//    							{
+//    								WaveExplosion wave = (WaveExplosion) e;
+    //
+//    								//Our wave explosion hit something
+//    								if (coreDistance <= wave.getCurrentRadius ())
+//    								{
+//    									//Don't want to re-activate a dead object
+//    									if (otherMissile.getState () != GameObject.STATE_DEAD)
+//    									{
+//    										otherMissile.setState (GameObject.STATE_DYING);
+//    									}
+//    								}
+//    							}
+//    							
+//    							//TODO: Add code for shrapnel type explosion
+//    						}
+//    					}
+    					break;
+    					
+    				case GameObject.STATE_DEAD:
+    					//Verify each child is dead as well
+    					ArrayList<GameObject> children = m.getChildren ();
+    					
+    					//If an object has no children, just remove it
+    					if (children != null)
+    					{
+    						boolean cleanUp = true;
+    						
+    						for (int j = 0; j < children.size (); j++)
+    						{
+    							GameObject child = children.get (j);
+    							
+    							if (child.getState () == GameObject.STATE_DEAD)
+    							{
+    								children.remove (child);
+    								j--;
+    							}
+    							else
+    							{
+    								cleanUp = false;
+    							}
+    						}
+    						
+    						if (cleanUp)
+    						{
+    							mMissiles.remove (m);
+    							i--;
+    						}
+    					}
+    					else
+    					{
+    						mMissiles.remove (m);
+    						i--;
+    					}
+    					break;
+    			} //End of switch			
+    		} //End of for loop
+    		
+    		mSem.release ();
+    	} //End of try
+    	catch (InterruptedException e)
+    	{
+    		System.err.println ("InterruptedException in updateProjectiles: " + e.getMessage ());
+    	}
+		
 	} //End of updateProjectiles
     
     private void drawProjectiles (Canvas canvas, Paint paint, int timeElapsed)
     {
-    	for (int i = 0; i < mMissiles.size (); i++)
-		{
-			GameMissile m = (GameMissile) mMissiles.get (i);
-			
-			//Draw positions and explosions
-			switch (m.getState ())
+    	try
+    	{
+    		mSem.acquire ();
+    	
+	    	for (int i = 0; i < mMissiles.size (); i++)
 			{
-				case GameObject.STATE_LARVAL:
-				case GameObject.STATE_ALIVE:
-					SmokeEmitter2D smokeEmitter = m.getSmokeEmitter ();
-					
-					smokeEmitter.update(timeElapsed);
-					smokeEmitter.draw(canvas);
-                    
-                    m.draw(canvas, paint);
-					break;
-					
-				case GameObject.STATE_DYING:
-					Explosion ex = m.getExplosion ();
-					
-					if (ex != null)
-					{
-						ex.drawExplosion (canvas, timeElapsed);
-					}
-					break;
-					
-				case GameObject.STATE_DEAD:
-					break;
-			}
-		} //End of for loop
+				GameMissile m = (GameMissile) mMissiles.get (i);
+				
+				//Draw positions and explosions
+				switch (m.getState ())
+				{
+					case GameObject.STATE_LARVAL:
+					case GameObject.STATE_ALIVE:
+						SmokeEmitter2D smokeEmitter = m.getSmokeEmitter ();
+						
+						smokeEmitter.update(timeElapsed);
+						smokeEmitter.draw(canvas);
+	                    
+	                    m.draw(canvas, paint);
+						break;
+						
+					case GameObject.STATE_DYING:
+						Explosion ex = m.getExplosion ();
+						
+						if (ex != null)
+						{
+							ex.drawExplosion (canvas, timeElapsed);
+						}
+						break;
+						
+					case GameObject.STATE_DEAD:
+						break;
+				}
+			} //End of for loop
+	    	
+	    	mSem.release ();
+	    } //End of try
+		catch (InterruptedException e)
+		{
+			System.err.println ("InterruptedException in updateProjectiles: " + e.getMessage ());
+		}
     } //End of drawProjectiles
 } //End of CanvasThread class

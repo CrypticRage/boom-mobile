@@ -9,11 +9,31 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.os.Handler;
+import android.os.Message;
 
 class BoomView extends SurfaceView implements SurfaceHolder.Callback {
     SurfaceHolder mHolder;
     private CanvasThread mPreviewThread;
     private boolean mHasSurface;
+    
+    protected StatusEventHandler mStatusEventHandler;
+	
+	private class StatusEventHandler extends Handler
+	{
+		public StatusEventHandler ()
+		{
+			super ();
+		}
+		
+		public void handleMessage (Message msg)
+		{
+			//TODO: Extract StatusUpdate message type
+			//and update the score or w/e
+			
+			msg.recycle ();
+		}
+	}
     
     public BoomView(Context context, AttributeSet attrs, Map inflateParams) {
         super(context, attrs, inflateParams);
@@ -79,8 +99,11 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
     
     @Override
 	public boolean onTouchEvent(MotionEvent event) {
-        GlobalData.x = event.getX();
-        GlobalData.y = event.getY();
+    	Handler handler = GlobalData.canvasThreadHandler;
+        Message msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, event);
+        msg.target = handler;
+        
+        handler.sendMessage (msg);
         
         return true;
     }
