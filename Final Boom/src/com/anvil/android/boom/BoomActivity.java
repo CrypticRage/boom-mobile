@@ -14,16 +14,23 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 public class BoomActivity extends Activity {
-	private TextView fpsView;
+	private TextView topStatusView, bottomStatusView;
 	private BoomView mPreview;
     
 	// Need handler for callbacks to the UI thread
 	final private Handler mHandler = new Handler();
 
     // Create runnable for posting
-    final private Runnable mFPSUpdate = new Runnable() {
+    final private Runnable mTopUpdate = new Runnable() {
         public void run() {
-        	updateFPS();
+        	updateTopStatus();
+        }
+    };
+    
+    // Create runnable for posting
+    final private Runnable mBottomUpdate = new Runnable() {
+        public void run() {
+        	updateBottomStatus();
         }
     };
     
@@ -40,10 +47,12 @@ public class BoomActivity extends Activity {
     
         loadSprites();
         
-        setContentView(R.layout.boom);
-        mPreview = (BoomView)this.findViewById(R.id.maincanvas);
-        fpsView = (TextView)this.findViewById(R.id.fpsmeter);
-        updateFPS();
+        setContentView(R.layout.canvas);
+        mPreview = (BoomView)this.findViewById(R.id.main_canvas);
+        topStatusView = (TextView)this.findViewById(R.id.top_status_bar);
+        bottomStatusView = (TextView)this.findViewById(R.id.bottom_status_bar);
+        updateTopStatus();
+        updateBottomStatus();
     }
     
     @Override
@@ -60,14 +69,19 @@ public class BoomActivity extends Activity {
         super.onPause();
         mPreview.pause();
     }
-    
-    private void updateFPS() {
+          
+    private void updateTopStatus() {
     	//fpsView.setText((1000000.0f / GlobalData.frameTimeMicro) + " fps");
-    	fpsView.setText((1000000.0f / GlobalData.frameTimeMicro) + " fps\n" + 
+    	topStatusView.setText((1000000.0f / GlobalData.frameTimeMicro) + " fps\n" + 
     			GlobalData.overTimeMicro + " us \n" +
-    			"overCount: " + GlobalData.overCount);    	
-    	mHandler.postDelayed(mFPSUpdate, 2000);
+    			"overCount: " + GlobalData.overCount);
+    	mHandler.postDelayed(mTopUpdate, 1000);
     }
+     
+    private void updateBottomStatus() {
+    	bottomStatusView.setText(GlobalData.bottomStatusText);
+    	mHandler.postDelayed(mBottomUpdate, 1000);
+    }   
     
     private void loadSprites() {
     	GlobalData.sprites = new Bitmap[3];
