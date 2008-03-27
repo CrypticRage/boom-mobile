@@ -43,7 +43,7 @@ class CanvasThread extends Thread {
     
 	/* Camera Variables */
 	
-	protected MotionEventHandler mMotionEventHandler;
+	protected volatile MotionEventHandler mMotionEventHandler;
 	
 	private class MotionEventHandler extends Handler
 	{
@@ -57,11 +57,11 @@ class CanvasThread extends Thread {
 			switch (msg.what)
 			{
 				case GlobalData.MOTION_EVENT_TYPE:
-					MotionEvent motionEvent = (MotionEvent) msg.obj;
+					PointF tempPoint = (PointF) msg.obj;
 					float xCoord = 0, yCoord = 0;
 					
-					xCoord = motionEvent.getX ();
-					yCoord = motionEvent.getY ();
+					xCoord = tempPoint.x;
+					yCoord = tempPoint.y;
 					
 					GameMissile m1 = new GameMissileNormal (30, 240, 320);
 					m1.setVelocity (50);

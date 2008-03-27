@@ -2,9 +2,10 @@ package com.anvil.android.boom.logic;
 
 import com.anvil.android.boom.GlobalData;
 import com.anvil.android.boom.particles.SmokeEmitter2D;
+import com.anvil.android.boom.particles.SpriteInstance;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.graphics.Paint;
 import android.graphics.PointF;
 
@@ -41,6 +42,9 @@ public abstract class GameMissile extends GameObject {
 		mStartingPos = new PointF (startingX, startingY);
 		mCurrentPos = new PointF (startingX, startingY);
 		
+		mSprite = new SpriteInstance(GlobalData.sprites[1]);
+		mSprite.setScale(0.20f);
+		
 		//TODO: Need to change so we're not accessing a specific index in the sprite array
 		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES, startingX, startingY, GlobalData.sprites[0]);
 		
@@ -57,17 +61,14 @@ public abstract class GameMissile extends GameObject {
 			case GameObject.STATE_LARVAL:
 			case GameObject.STATE_ALIVE:
 			{
-				Bitmap temp = GlobalData.sprites[1];
-
-		    	canvas.save();
-				canvas.scale(0.5f, 0.5f);
+				RectF tempBox = mSprite.getDrawBox();
 				
+				canvas.save();
+				canvas.translate(mCurrentPos.x, mCurrentPos.y);
 				//TODO: Need to figure out the correct rotation for each missile based on
 				//trajectory and flight path type
-				canvas.rotate (180.0f + 45.0f,
-							   mCurrentPos.x + (temp.getWidth () / 2) + 15.0f,
-							   mCurrentPos.y + (temp.getHeight() / 2) + 15.0f);
-		    	canvas.drawBitmap(temp, mCurrentPos.x, mCurrentPos.y, paint);
+				canvas.rotate (180.0f + 45.0f);				
+		    	canvas.drawBitmap(mSprite.sprite, null, tempBox, paint);
 				canvas.restore();
 			}
 			break;
