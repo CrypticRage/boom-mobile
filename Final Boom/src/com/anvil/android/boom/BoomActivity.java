@@ -18,7 +18,7 @@ public class BoomActivity extends Activity {
 	private BoomView mPreview;
     
 	// Need handler for callbacks to the UI thread
-	final private Handler mHandler = new Handler();
+	private volatile Handler mHandler = new Handler();
 
     // Create runnable for posting
     final private Runnable mTopUpdate = new Runnable() {

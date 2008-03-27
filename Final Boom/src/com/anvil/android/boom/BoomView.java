@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.anvil.android.boom.GlobalData;
 
+import android.graphics.PointF;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -100,10 +101,13 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
 	public boolean onTouchEvent(MotionEvent event) {
     	Handler handler = GlobalData.canvasThreadHandler;
-        Message msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, event);
+    	PointF tempPoint = new PointF(event.getX(), event.getY());
+    	Message msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, tempPoint);
+    	//Message msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, event);
         msg.target = handler;
         
-        handler.sendMessage (msg);
+        handler.sendMessageAtFrontOfQueue(msg);
+        //handler.sendMessage (msg);
         
         return true;
     }

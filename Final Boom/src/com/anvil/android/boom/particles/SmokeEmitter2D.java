@@ -13,15 +13,16 @@ public class SmokeEmitter2D extends ParticleEmitter2D {
 		smokeCloud = sprite;
 		
 		for (int i = 0; i < numParticles; i++) {
-			Particle2D p = new SpriteParticle2D(x, y, smokeCloud);
+			SpriteParticle2D p = new SpriteParticle2D(x, y, smokeCloud);
+			p.sprite.setScale(0.25f);
 			deadPool.add(p);
 		}
 		
 		this.deadCount = numParticles;
-		this.scatter = 10.0f;
-		this.hscatter = 10.0f;
-		this.vscatter = 10.0f;
-		this.rate = 200000;
+		this.scatter = 1.0f;
+		this.hscatter = 3.0f;
+		this.vscatter = 3.0f;
+		this.rate = 100000;
         
 		paint.setAntiAlias(true);
 	}
@@ -32,7 +33,7 @@ public class SmokeEmitter2D extends ParticleEmitter2D {
 		float tempX = this.x;
 		float tempY = this.y;
 		
-		p.lifetime = 3000000;
+		p.lifetime = 1500000;
 		p.age = 0;
 		p.decay = p.lifetime/256;
 		p.alpha = 255;
@@ -55,6 +56,7 @@ public class SmokeEmitter2D extends ParticleEmitter2D {
 		
 		p.x = tempX;
 		p.y = tempY;
+		//p.sprite.setScale(0.15f);
 	}
 	
 	public void update(int time) {		
@@ -101,15 +103,15 @@ public class SmokeEmitter2D extends ParticleEmitter2D {
 	}
 	
 	public void draw(Canvas canvas) {
-		canvas.save();
-		canvas.scale(0.5f, 0.5f);
         for (int i = 0; i < liveCount; i++) {
-			SpriteParticle2D p = (SpriteParticle2D)livePool.get(i);
+    		canvas.save();
+        	SpriteParticle2D p = (SpriteParticle2D)livePool.get(i);
+			SpriteInstance tempSprite = p.sprite;
 			paint.setAlpha(p.alpha);
+			canvas.translate(p.x, p.y);
 			canvas.rotate(0, this.x, this.y);
-			//canvas.drawBitmap(p.sprite, null, p.spriteBox, this.paint);
-			canvas.drawBitmap(p.sprite, p.x, p.y, this.paint);
-		}
-		canvas.restore();
+			canvas.drawBitmap(tempSprite.sprite, null, tempSprite.getDrawBox(), this.paint);
+			canvas.restore();
+        }
 	}
 }

@@ -1,11 +1,10 @@
 package com.anvil.android.boom.particles;
 
+import com.anvil.android.boom.particles.SpriteInstance;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 
 public class SpriteParticle2D extends Particle2D {
-	public Bitmap sprite;
-	public Rect spriteBox;
+	public SpriteInstance sprite;
 	public int alpha;
 	public float angle;
 	
@@ -20,8 +19,7 @@ public class SpriteParticle2D extends Particle2D {
 	}
 		
 	private void init(Bitmap sprite) {
-		this.sprite = sprite;
-		this.spriteBox = new Rect(0, sprite.getHeight(), sprite.getWidth(), 0);
+		this.sprite = new SpriteInstance(sprite);
 		this.alpha = 255;
 		this.angle = 0.0f;
 	}

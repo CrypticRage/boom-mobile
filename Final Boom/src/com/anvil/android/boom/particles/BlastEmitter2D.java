@@ -14,6 +14,7 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 		super(1, x, y);
 
 		SpriteParticle2D p = new SpriteParticle2D(x, y, sprite);
+		p.sprite.setScale(0.25f);
 		newParticle(p);
 		livePool.add(p);
 		liveCount = 1;
@@ -61,12 +62,12 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 	public void draw(Canvas canvas) {
 		if (status == ALIVE) {
 			canvas.save();
-			canvas.scale(0.5f, 0.5f);
 			SpriteParticle2D p = (SpriteParticle2D)livePool.get(0);
+			SpriteInstance tempSprite = p.sprite;
 			paint.setAlpha(p.alpha);
+			canvas.translate(p.x, p.y);
 			canvas.rotate(0, this.x, this.y);
-			//canvas.drawBitmap(p.sprite, null, p.spriteBox, this.paint);
-			canvas.drawBitmap(p.sprite, p.x, p.y, this.paint);
+			canvas.drawBitmap(tempSprite.sprite, null, tempSprite.getDrawBox(), this.paint);
 			canvas.restore();			
 		}
 	}

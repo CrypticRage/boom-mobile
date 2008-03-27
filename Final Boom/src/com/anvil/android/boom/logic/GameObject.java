@@ -3,8 +3,9 @@ package com.anvil.android.boom.logic;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.drawable.Drawable;
 import java.util.ArrayList;
+
+import com.anvil.android.boom.particles.SpriteInstance;
 
 public abstract class GameObject {
 	// Game object states are done using a constant rather than an Enum.
@@ -18,8 +19,7 @@ public abstract class GameObject {
 	protected PointF mCurrentPos;
 	protected PointF mStartingPos;
 	protected PointF mTargetPos;
-	protected int mVelocity;					//Number of pixels per second
-	
+	protected int mVelocity;					// Number of units per second
 	
 	// Game rule objects
 	protected int mPointsAward; // How many points for killing this thing.  Negative penalties apply
@@ -34,7 +34,7 @@ public abstract class GameObject {
 	protected GameObject mParent;
 	protected ArrayList<GameObject> mChildren;
 		
-	protected Drawable mDrawable; // The graphic asset associated with this object.
+	protected SpriteInstance mSprite; // The graphic asset associated with this object.
 	
 	protected MotionSolver mMotionSolver; // The motion solver for this object
 	
@@ -135,12 +135,12 @@ public abstract class GameObject {
 		return mChildren;
 	}
 
-	public Drawable getDrawable() {
-		return mDrawable;
+	public SpriteInstance getSprite() {
+		return mSprite;
 	}
 
-	public void setDrawable(Drawable drawable) {
-		mDrawable = drawable;
+	public void setSprite(SpriteInstance sprite) {
+		mSprite = sprite;
 	}
 
 	abstract public void draw(Canvas canvas, Paint paint);
