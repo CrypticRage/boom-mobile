@@ -85,7 +85,7 @@ class CanvasThread extends Thread {
 					}
 					finally
 					{
-						msg.recycle ();
+						//msg.recycle ();
 					}
 					break;
 					

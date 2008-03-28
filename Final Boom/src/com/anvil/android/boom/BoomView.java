@@ -7,6 +7,7 @@ import com.anvil.android.boom.GlobalData;
 import android.graphics.PointF;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -17,6 +18,7 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
     SurfaceHolder mHolder;
     private CanvasThread mPreviewThread;
     private boolean mHasSurface;
+    private int touchCount = 0;
     
     protected StatusEventHandler mStatusEventHandler;
 	
@@ -100,15 +102,18 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
     
     @Override
 	public boolean onTouchEvent(MotionEvent event) {
-    	Handler handler = GlobalData.canvasThreadHandler;
-    	PointF tempPoint = new PointF(event.getX(), event.getY());
-    	Message msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, tempPoint);
-    	//Message msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, event);
-        msg.target = handler;
-        
-        handler.sendMessageAtFrontOfQueue(msg);
-        //handler.sendMessage (msg);
-        
+    	if (event.getAction() == MotionEvent.ACTION_UP) {
+        	touchCount++;
+    		Log.i("BoomView onTouchEvent()", "Count: " + touchCount);
+    		
+        	Handler handler = GlobalData.canvasThreadHandler;
+        	PointF tempPoint = new PointF(event.getX(), event.getY());
+        	Message msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, tempPoint);
+        	//Message msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, event);
+            msg.target = handler;           
+            handler.sendMessageAtFrontOfQueue(msg);
+            //handler.sendMessage (msg);   		
+    	}
         return true;
     }
 }
