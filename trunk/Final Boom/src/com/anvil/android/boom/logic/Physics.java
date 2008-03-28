@@ -15,7 +15,7 @@ public abstract class Physics {
 		distanceX = p1.x - p2.x;
 		distanceY = p1.y - p2.y;
 		
-		distance = Math.sqrt (Math.pow (distanceY, 2) + Math.pow (distanceX, 2));
+		distance = Math.sqrt (distanceY*distanceY + distanceX*distanceX);
 		
 		return distance;
 	}

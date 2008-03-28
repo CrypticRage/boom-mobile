@@ -35,6 +35,7 @@ public abstract class GameObject {
 	protected ArrayList<GameObject> mChildren;
 		
 	protected SpriteInstance mSprite; // The graphic asset associated with this object.
+	protected float drawAngle;
 	
 	protected MotionSolver mMotionSolver; // The motion solver for this object
 	
@@ -72,8 +73,25 @@ public abstract class GameObject {
 
 	public void setTargetPos(PointF targetPos) {
 		mTargetPos = targetPos;
+		calcDrawAngle();
 	}
 
+	private void calcDrawAngle() {
+		double hyp = Physics.calculateDistance(mStartingPos, mTargetPos);
+		float opp = mStartingPos.y - mTargetPos.y;
+		double tempAngle = Math.asin(opp/hyp);
+		tempAngle = Math.toDegrees(tempAngle);
+		if (mTargetPos.x > mStartingPos.x) {
+			drawAngle = 180.0f - (float)tempAngle;
+		}
+		else if (mTargetPos.x < mStartingPos.x) {
+			drawAngle = (float)tempAngle;
+		}
+		else if (mTargetPos.x == mStartingPos.x) {
+			drawAngle = 90.0f;
+		}		
+	}
+	
 	public int getVelocity() {
 		return mVelocity;
 	}

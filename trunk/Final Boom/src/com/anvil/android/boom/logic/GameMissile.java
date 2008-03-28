@@ -65,9 +65,7 @@ public abstract class GameMissile extends GameObject {
 				
 				canvas.save();
 				canvas.translate(mCurrentPos.x, mCurrentPos.y);
-				//TODO: Need to figure out the correct rotation for each missile based on
-				//trajectory and flight path type
-				canvas.rotate (180.0f + 45.0f);				
+				canvas.rotate(drawAngle);				
 		    	canvas.drawBitmap(mSprite.sprite, null, tempBox, paint);
 				canvas.restore();
 			}
