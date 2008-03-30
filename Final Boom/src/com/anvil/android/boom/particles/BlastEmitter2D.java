@@ -11,6 +11,8 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 	public static final int DEAD = 0;
 	public static final int ALIVE = 1;
 	
+	public int color = Color.RED;
+	
 	private float maxRadius = 0.0f;
 	private float radius = 0.0f;
 	private float radVelocity = 0.0f;
@@ -29,7 +31,6 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 		radVelocity = radVel;
 		
 		paint.setAntiAlias(true);
-		paint.setColor(Color.RED);
 	}
 
 	public void newParticle(Particle2D particle) {
@@ -45,6 +46,7 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 		if (status == ALIVE) {
 			SpriteParticle2D p = (SpriteParticle2D)livePool.get(0);
 			
+			/*
 			p.currentDecay += time;
 			if (p.currentDecay >= p.decay && (p.age >= p.lifetime/2)) {
 				int decayFactor = p.currentDecay / p.decay;
@@ -65,8 +67,9 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 				liveCount--;
 				status = DEAD;
 			}				
-		
-			radius += time*radVelocity;
+			*/
+			
+			radius += (time*0.000001f)*radVelocity;
 			if (radius >= maxRadius) {
 				radius = maxRadius;
 			}
@@ -76,9 +79,10 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 	public void draw(Canvas canvas) {
 		if (status == ALIVE) {
 			canvas.save();
+			paint.setColor(color);
+			paint.setAlpha(125);
 			SpriteParticle2D p = (SpriteParticle2D)livePool.get(0);
 			//SpriteInstance tempSprite = p.sprite;
-			paint.setAlpha(p.alpha);
 			//canvas.translate(p.x, p.y);
 			canvas.drawCircle(p.x, p.y, radius, paint);
 			//canvas.rotate(0, this.x, this.y);
