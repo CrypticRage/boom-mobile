@@ -22,7 +22,7 @@ public class SmokeEmitter2D extends ParticleEmitter2D {
 		this.scatter = 1.0f;
 		this.hscatter = 3.0f;
 		this.vscatter = 3.0f;
-		this.rate = 100000;
+		this.rate = 60000;
         
 		paint.setAntiAlias(true);
 	}

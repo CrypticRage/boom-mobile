@@ -10,6 +10,8 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 	public static final int DEAD = 0;
 	public static final int ALIVE = 1;
 	
+	private float radius;
+	
 	public BlastEmitter2D(float x, float y, Bitmap sprite) {
 		super(1, x, y);
 
