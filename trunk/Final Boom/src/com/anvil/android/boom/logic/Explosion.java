@@ -28,7 +28,7 @@ public abstract class Explosion {
 		mParent = parent;
 	}
 	
-	public Explosion (float x, float y, int radius, int velocity, GameMissile parent)
+	public Explosion (float x, float y, float radius, float velocity, GameMissile parent)
 	{
 		mStartingPos = new PointF (x, y);
 		mExplosionRadius = radius;

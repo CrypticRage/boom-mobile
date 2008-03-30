@@ -9,8 +9,8 @@ import java.util.Random;
 public class ShrapnelExplosion extends Explosion {
 
 	public static final int DEFAULT_SHRAPNEL_EXPLOSION_PIECES = 5;
-	public static final int DEFAULT_PIECE_EXPLOSION_RADIUS = 50;
-	public static final int DEFAULT_SHRAPNEL_EXPLOSION_VELOCITY = 500;
+	public static final float DEFAULT_PIECE_EXPLOSION_RADIUS = 50;
+	public static final float DEFAULT_SHRAPNEL_EXPLOSION_VELOCITY = 25;
 	
 	
 	public ShrapnelExplosion (GameMissile parent)
@@ -18,7 +18,7 @@ public class ShrapnelExplosion extends Explosion {
 		super (parent);
 	}
 	
-	public ShrapnelExplosion (float x, float y, int radius, int velocity, GameMissile parent)
+	public ShrapnelExplosion (float x, float y, float radius, float velocity, GameMissile parent)
 	{
 		super (x, y, radius, velocity, parent);
 		
@@ -31,7 +31,7 @@ public class ShrapnelExplosion extends Explosion {
 		{
 			double angle = rand.nextDouble () * (2 * Math.PI);
 			PointF targetPos = new PointF (x, y);
-			int parentProximityRadius = parent.getProximityRadius ();
+			float parentProximityRadius = parent.getProximityRadius ();
 			GameMissileNormal m = new GameMissileNormal (DEFAULT_PIECE_EXPLOSION_RADIUS,
 														 x + parentProximityRadius,
 														 y + parentProximityRadius);

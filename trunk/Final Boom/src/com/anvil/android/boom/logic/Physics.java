@@ -4,8 +4,8 @@ import android.graphics.PointF;
 
 public abstract class Physics {
 
-	public static final int VELOCITY_MAX = 1000;
-	public static final int VELOCITY_MIN = 0;
+	public static final float VELOCITY_MAX = 1000;
+	public static final float VELOCITY_MIN = 0;
 	
 	public static double calculateDistance (PointF p1, PointF p2)
 	{
