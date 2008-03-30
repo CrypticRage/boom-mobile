@@ -36,7 +36,12 @@ public class WaveExplosion extends Explosion {
 		mCurrentRadius = 0;
 		
 		//TODO: Need to change so we're not accessing a specific index in the sprite array
-		mBlastEmitter = new BlastEmitter2D(x, y, GlobalData.sprites[2]);
+		mBlastEmitter = new BlastEmitter2D(	x,
+											y,
+											DEFAULT_WAVE_EXPLOSION_VELOCITY,
+											DEFAULT_WAVE_EXPLOSION_RADIUS,
+											GlobalData.sprites[2]
+		);
 	}
 	
 	public float getCurrentRadius ()
