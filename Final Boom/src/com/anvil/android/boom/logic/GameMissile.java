@@ -13,14 +13,14 @@ import android.graphics.PointF;
 public abstract class GameMissile extends GameObject {
 	
 	public static final int DEFAULT_NUM_SMOKE_PARTICLES = 30;
-	public static final int DEFAULT_PROXIMITY_RADIUS = 5;
-	public static final int DEFAULT_MISSILE_VELOCITY = 50;
+	public static final float DEFAULT_PROXIMITY_RADIUS = 5;
+	public static final float DEFAULT_MISSILE_VELOCITY = 50;
 	
 	public static final int DEFAULT_MAX_SCORE_VALUE = 100;
 	public static final int DEFAULT_MIN_SCORE_VALUE = 10;
 	
-	protected int mExplosionRadius;	//Radius of explosion
-	protected int mProximityRadius;	//If a non-friendly is detected within
+	protected float mExplosionRadius;	//Radius of explosion
+	protected float mProximityRadius;	//If a non-friendly is detected within
 									//this radius, trigger explosion
 	
 	protected SmokeEmitter2D mSmokeEmitter;
@@ -46,7 +46,7 @@ public abstract class GameMissile extends GameObject {
 		mMinScoreValue = DEFAULT_MIN_SCORE_VALUE;
 	}
 	
-	public GameMissile (int radius, float startingX, float startingY)
+	public GameMissile (float radius, float startingX, float startingY)
 	{
 		mExplosionRadius = radius;
 		mProximityRadius = DEFAULT_PROXIMITY_RADIUS;
@@ -94,12 +94,12 @@ public abstract class GameMissile extends GameObject {
 		}
 	}
 	
-	public int getProximityRadius ()
+	public float getProximityRadius ()
 	{
 		return mProximityRadius;
 	}
 	
-	public int getExplosionRadius ()
+	public float getExplosionRadius ()
 	{
 		return mExplosionRadius;
 	}

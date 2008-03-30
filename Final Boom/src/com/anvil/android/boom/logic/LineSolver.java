@@ -19,7 +19,7 @@ public class LineSolver extends MotionSolver {
 		if (objectState == GameObject.STATE_LARVAL || 
 			objectState == GameObject.STATE_ALIVE)
 		{
-			int objectVelocity = object.getVelocity ();
+			float objectVelocity = object.getVelocity ();
 			float velocityPerUSecond = (objectVelocity / MotionSolver.MICROSECONDS_PER_SECOND) * timeElapsed;
 			
 			//If two points are not horizontal or vertical

@@ -9,7 +9,7 @@ public class GameMissileNormal extends GameMissile {
 		super ();
 	}
 	
-	public GameMissileNormal (int explosionRadius, float startingX, float startingY)
+	public GameMissileNormal (float explosionRadius, float startingX, float startingY)
 	{
 		super (explosionRadius, startingX, startingY);
 	}

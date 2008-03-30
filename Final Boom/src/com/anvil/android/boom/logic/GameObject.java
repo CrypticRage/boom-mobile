@@ -19,7 +19,7 @@ public abstract class GameObject {
 	protected PointF mCurrentPos;
 	protected PointF mStartingPos;
 	protected PointF mTargetPos;
-	protected int mVelocity;					// Number of units per second
+	protected float mVelocity;					// Number of units per second
 	
 	// Game rule objects
 	protected int mPointsAward; // How many points for killing this thing.  Negative penalties apply
@@ -92,11 +92,11 @@ public abstract class GameObject {
 		}		
 	}
 	
-	public int getVelocity() {
+	public float getVelocity() {
 		return mVelocity;
 	}
 	
-	public void setVelocity(int velocity) {
+	public void setVelocity(float velocity) {
 		if (velocity > Physics.VELOCITY_MIN && velocity < Physics.VELOCITY_MAX)
 			mVelocity = velocity;
 		else if (velocity > Physics.VELOCITY_MAX)

@@ -10,11 +10,11 @@ public class WaveExplosion extends Explosion {
 	
 	//TODO: Need to figure out if the velocity range 
 	//[0, 100] is appropriate
-	public static int DEFAULT_WAVE_EXPLOSION_VELOCITY = 25; 
+	public static float DEFAULT_WAVE_EXPLOSION_VELOCITY = 25; 
 	
-	public static final int DEFAULT_WAVE_EXPLOSION_RADIUS = 60;
+	public static final float DEFAULT_WAVE_EXPLOSION_RADIUS = 60;
 
-	protected int mCurrentRadius;
+	protected float mCurrentRadius;
 	
 	BlastEmitter2D mBlastEmitter;
 	
@@ -29,7 +29,7 @@ public class WaveExplosion extends Explosion {
 		mBlastEmitter = null;
 	}
 	
-	public WaveExplosion (float x, float y, int radius, int velocity, GameMissile parent)
+	public WaveExplosion (float x, float y, float radius, float velocity, GameMissile parent)
 	{
 		super (x, y, radius, velocity, parent);
 		
@@ -39,7 +39,7 @@ public class WaveExplosion extends Explosion {
 		mBlastEmitter = new BlastEmitter2D(x, y, GlobalData.sprites[2]);
 	}
 	
-	public int getCurrentRadius ()
+	public float getCurrentRadius ()
 	{
 		return mCurrentRadius;
 	}
