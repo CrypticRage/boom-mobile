@@ -3,6 +3,7 @@ package com.anvil.android.boom;
 import java.util.Map;
 
 import com.anvil.android.boom.GlobalData;
+import com.anvil.android.boom.logic.scoring.StatusUpdateMessage;
 
 import android.graphics.PointF;
 import android.content.Context;
@@ -33,6 +34,26 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
 		{
 			//TODO: Extract StatusUpdate message type
 			//and update the score or w/e
+			switch (msg.what)
+			{
+				case GlobalData.STATUS_UPDATE_EVENT_TYPE:
+					String newStatus;
+					StatusUpdateMessage statusMsg = (StatusUpdateMessage) msg.obj;
+					int gameScore = GlobalData.gameScore; 
+					
+					//Update the running score total
+					gameScore += (statusMsg.mScoreChange);
+					
+					newStatus = "Score: " + gameScore;
+					
+					//Update the GlobalData fields
+					GlobalData.gameScore = gameScore;
+					GlobalData.bottomStatusText = newStatus;
+					break;
+
+				default:
+					break;
+			} //End of switch statement
 			
 			msg.recycle ();
 		}
@@ -60,6 +81,10 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
         // application this should be more dynamic. This guarantees that
         // the underlying surface will never change size.
         mHolder.setFixedSize(480, 320);
+        
+        mStatusEventHandler = new StatusEventHandler ();
+        
+        GlobalData.uiThreadHandler = mStatusEventHandler;
     }
 
     public void resume() {

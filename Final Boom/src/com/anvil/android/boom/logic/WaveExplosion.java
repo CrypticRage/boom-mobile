@@ -7,6 +7,8 @@ import com.anvil.android.boom.particles.BlastEmitter2D;
 
 
 public class WaveExplosion extends Explosion {
+	
+	public static final int DEFAULT_WAVE_EXPLOSION_RADIUS = 60;
 
 	protected int mCurrentRadius;
 	

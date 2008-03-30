@@ -13,13 +13,21 @@ import android.graphics.PointF;
 public abstract class GameMissile extends GameObject {
 	
 	public static final int DEFAULT_NUM_SMOKE_PARTICLES = 30;
-	public static final int DEFAULT_PROXIMITY_RADIUS = 1;
+	public static final int DEFAULT_PROXIMITY_RADIUS = 5;
+	public static final int DEFAULT_MISSILE_VELOCITY = 50;
+	
+	public static final int DEFAULT_MAX_SCORE_VALUE = 100;
+	public static final int DEFAULT_MIN_SCORE_VALUE = 10;
 	
 	protected int mExplosionRadius;	//Radius of explosion
 	protected int mProximityRadius;	//If a non-friendly is detected within
 									//this radius, trigger explosion
 	
 	protected SmokeEmitter2D mSmokeEmitter;
+	
+	protected long mTimeCreated;
+	protected int mMaxScoreValue;
+	protected int mMinScoreValue;
 	
 	// TODO find some list type to use.
 	// TODO if a MIRV exists as children in a container, how do the child missiles get
@@ -32,6 +40,10 @@ public abstract class GameMissile extends GameObject {
 		mProximityRadius = DEFAULT_PROXIMITY_RADIUS;
 		
 		mExplosion = null;
+		
+		mTimeCreated = System.currentTimeMillis ();
+		mMaxScoreValue = DEFAULT_MAX_SCORE_VALUE;
+		mMinScoreValue = DEFAULT_MIN_SCORE_VALUE;
 	}
 	
 	public GameMissile (int radius, float startingX, float startingY)
@@ -104,5 +116,20 @@ public abstract class GameMissile extends GameObject {
 	public SmokeEmitter2D getSmokeEmitter ()
 	{
 		return mSmokeEmitter;
+	}
+	
+	public int getMaxScoreValue ()
+	{
+		return mMaxScoreValue;
+	}
+	
+	public int getMinScoreValue ()
+	{
+		return mMinScoreValue;
+	}
+	
+	public long getTimeCreated ()
+	{
+		return mTimeCreated;
 	}
 } //End of class GameMissile
