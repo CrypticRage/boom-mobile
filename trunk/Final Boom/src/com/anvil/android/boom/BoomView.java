@@ -129,7 +129,7 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
 	public boolean onTouchEvent(MotionEvent event) {
     	if (event.getAction() == MotionEvent.ACTION_UP) {
         	touchCount++;
-    		Log.i("BoomView onTouchEvent()", "Count: " + touchCount);
+    		//Log.i("BoomView onTouchEvent()", "Count: " + touchCount);
     		
         	Handler handler = GlobalData.canvasThreadHandler;
         	PointF tempPoint = new PointF(event.getX(), event.getY());
