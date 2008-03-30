@@ -7,11 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.os.Handler;
 import android.os.Message;
-
+import android.util.Log;
 
 import com.anvil.android.boom.logic.Explosion;
 import com.anvil.android.boom.logic.ExplosionUpdater;
@@ -47,39 +46,6 @@ class CanvasThread extends Thread {
 	/* Camera Variables */
 
 	
-    private void createEnemyMissile () {
-    	//Determine a random X value to begin from
-    	Random generator = new Random (System.currentTimeMillis ());
-    	float startingX = generator.nextInt (320);
-    	float endingX = generator.nextInt (320);
-    	
-		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_WAVE_EXPLOSION_RADIUS,
-												startingX, 0);
-		m1.setVelocity (25);
-		m1.setTargetPos (new PointF (endingX, 320));
-		m1.setState (GameObject.STATE_ALIVE);
-		
-		//TODO: Do we just want to have some sort of general LineSolver
-		//instead of creating a new Solver for each missile?
-		MotionSolver ms1 = new LineSolver ();
-		m1.setMotionSolver(ms1);
-		
-		try
-		{
-			mSem.acquire ();
-			mEnemyMissiles.add (m1);
-			mSem.release ();
-		}
-		catch (InterruptedException e)
-		{
-			System.err.println ("InterruptedException in CanvasThread createEnemyMissile: " + e.getMessage ());
-		}
-		
-		Message msg = mMotionEventHandler.obtainMessage (GlobalData.ENEMY_MISSILE_GENERATION);
-        msg.target = mMotionEventHandler;
-        mMotionEventHandler.sendMessageDelayed (msg, 2000);
-    }
-	
 	protected MotionEventHandler mMotionEventHandler;
 	
 	private class MotionEventHandler extends Handler
@@ -91,42 +57,12 @@ class CanvasThread extends Thread {
 		
 		public void handleMessage (Message msg)
 		{
-			Log.i ("MotionEventHandler handleMessage()", "Received: " + msg.what);
-			
 			switch (msg.what)
 			{
 				case GlobalData.MOTION_EVENT_TYPE:
 					PointF tempPoint = (PointF) msg.obj;
-					float xCoord = 0, yCoord = 0;
 					
-					xCoord = tempPoint.x;
-					yCoord = tempPoint.y;
-					
-					//Start off from the center base
-					GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_WAVE_EXPLOSION_RADIUS,
-															240, 320);
-					//GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_WAVE_EXPLOSION_RADIUS, 
-					//		xCoord, yCoord);
-					
-					m1.setVelocity (50);
-					m1.setTargetPos (new PointF (xCoord, yCoord));
-					m1.setState (GameObject.STATE_ALIVE);
-					
-					//TODO: Do we just want to have some sort of general LineSolver
-					//instead of creating a new Solver for each missile?
-					MotionSolver ms1 = new LineSolver ();
-					m1.setMotionSolver(ms1);
-					
-					try
-					{
-						mSem.acquire ();
-						mFriendlyMissiles.add (m1);
-						mSem.release ();
-					}
-					catch (InterruptedException e)
-					{
-						System.err.println ("InterruptedException in CanvasThread MotionEventHandler: " + e.getMessage ());
-					}
+					createFriendlyMissile (tempPoint.x, tempPoint.y);
 					break;
 					
 				case GlobalData.ENEMY_MISSILE_GENERATION:
@@ -136,11 +72,9 @@ class CanvasThread extends Thread {
 				default:
 					msg.recycle ();
 					break;
-			}
-			
-			
-		}
-	}
+			} //End of switch
+		} //End of handleMessage
+	} //End of MotionEventHandler class
 	   
     CanvasThread(SurfaceHolder mHolder) {
         super();
@@ -216,6 +150,68 @@ class CanvasThread extends Thread {
         } catch (InterruptedException ex) { }
     }
     
+    private void createFriendlyMissile (float xCoord, float yCoord)
+    {
+		//Start off from the center base
+//		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_WAVE_EXPLOSION_RADIUS,
+//												240, 320);
+		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
+				xCoord, yCoord);
+		m1.setVelocity (GameMissile.DEFAULT_MISSILE_VELOCITY);
+		m1.setTargetPos (new PointF (xCoord, yCoord));
+		m1.setState (GameObject.STATE_ALIVE);
+		
+		//TODO: Do we just want to have some sort of general LineSolver
+		//instead of creating a new Solver for each missile?
+		MotionSolver ms1 = new LineSolver ();
+		m1.setMotionSolver(ms1);
+		
+		try
+		{
+			mSem.acquire ();
+			mFriendlyMissiles.add (m1);
+			mSem.release ();
+		}
+		catch (InterruptedException e)
+		{
+			System.err.println ("InterruptedException in CanvasThread MotionEventHandler: " + e.getMessage ());
+		}
+    }
+    
+    private void createEnemyMissile ()
+    {
+    	//Determine a random X value to begin from
+    	Random generator = new Random (System.currentTimeMillis ());
+    	float startingX = generator.nextInt (480);
+    	float endingX = generator.nextInt (480);
+    	
+		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS,
+												startingX, 0);
+		m1.setVelocity (25);
+		m1.setTargetPos (new PointF (endingX, 320));
+		m1.setState (GameObject.STATE_ALIVE);
+		
+		//TODO: Do we just want to have some sort of general LineSolver
+		//instead of creating a new Solver for each missile?
+		MotionSolver ms1 = new LineSolver ();
+		m1.setMotionSolver(ms1);
+		
+		try
+		{
+			mSem.acquire ();
+			mEnemyMissiles.add (m1);
+			mSem.release ();
+		}
+		catch (InterruptedException e)
+		{
+			System.err.println ("InterruptedException in CanvasThread createEnemyMissile: " + e.getMessage ());
+		}
+		
+		Message msg = mMotionEventHandler.obtainMessage (GlobalData.ENEMY_MISSILE_GENERATION);
+        msg.target = mMotionEventHandler;
+        mMotionEventHandler.sendMessageDelayed (msg, 500);
+    }
+    
     private void updateFriendlyProjectiles (int timeElapsed)
     {
     	for (int i = 0; i < mFriendlyMissiles.size (); i++)
@@ -254,6 +250,7 @@ class CanvasThread extends Thread {
 							{
 								otherMissile.setState (GameObject.STATE_DYING);
 								
+								Log.i ("Missile collision:", "" + m + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
 								//TODO: Calculate the score for this missile
 							}
 						}
@@ -293,10 +290,10 @@ class CanvasThread extends Thread {
 
 						//Calculate the distance between the current missile
 						//and the second one
-						PointF mCurrentPos = m.getCurrentPos ();
 						PointF otherCurrentPos = otherMissile.getCurrentPos ();
-						double coreDistance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
 						Explosion e = m.getExplosion ();
+						PointF mCurrentPos = e.getStartingPosition ();
+						double coreDistance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
 						
 						if (e instanceof WaveExplosion)
 						{
@@ -311,6 +308,8 @@ class CanvasThread extends Thread {
 									otherMissile.setState (GameObject.STATE_DYING);
 									
 									//TODO: Calculate the score for this missile
+									
+									Log.i ("Explosion collision:", "" + e + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
 								}
 							}
 						}
@@ -345,12 +344,14 @@ class CanvasThread extends Thread {
 						
 						if (cleanUp)
 						{
+							Log.i ("Removing missile:", "" + m);
 							mFriendlyMissiles.remove (m);
 							i--;
 						}
 					}
 					else
 					{
+						Log.i ("Removing missile:", "" + m);
 						mFriendlyMissiles.remove (m);
 						i--;
 					}

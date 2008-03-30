@@ -10,9 +10,11 @@ public class WaveExplosion extends Explosion {
 	
 	//TODO: Need to figure out if the velocity range 
 	//[0, 100] is appropriate
-	public static float DEFAULT_WAVE_EXPLOSION_VELOCITY = 25; 
+	public static float DEFAULT_WAVE_EXPLOSION_VELOCITY = 120; 
 	
-	public static final float DEFAULT_WAVE_EXPLOSION_RADIUS = 60;
+	public static final float DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS = 45;
+	public static final float DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS = 25;
+	public static final float DEFAULT_ENEMY_INTERCEPTED_WAVE_EXPLOSION_RADIUS = 10;
 
 	protected float mCurrentRadius;
 	
@@ -38,8 +40,8 @@ public class WaveExplosion extends Explosion {
 		//TODO: Need to change so we're not accessing a specific index in the sprite array
 		mBlastEmitter = new BlastEmitter2D(	x,
 											y,
-											DEFAULT_WAVE_EXPLOSION_VELOCITY,
-											DEFAULT_WAVE_EXPLOSION_RADIUS,
+											velocity,
+											radius,
 											GlobalData.sprites[2]
 		);
 	}
