@@ -7,14 +7,10 @@ import android.graphics.PointF;
 
 public abstract class Explosion {
 	
-	//TODO: Need to figure out if the velocity range 
-	//[0, 100] is appropriate
-	public static int DEFAULT_WAVE_EXPLOSION_VELOCITY = 5; 
-
 	protected PointF mStartingPos;		//The starting position of the explosion
-	protected int mExplosionRadius;		//The maximum radius of the explosion
+	protected float mExplosionRadius;		//The maximum radius of the explosion
 
-	protected int mExplosionVelocity;		//Velocity explosion travels outward
+	protected float mExplosionVelocity;		//Velocity explosion travels outward
 	
 	protected GameMissile mParent;
 	
@@ -41,7 +37,7 @@ public abstract class Explosion {
 		mParent = parent;
 	}
 	
-	public int getExplosionVelocity ()
+	public float getExplosionVelocity ()
 	{
 		return mExplosionVelocity;
 	}

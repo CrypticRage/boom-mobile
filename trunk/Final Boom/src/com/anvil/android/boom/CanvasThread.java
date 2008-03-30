@@ -280,7 +280,7 @@ class CanvasThread extends Thread {
 					{
 						if (eu != null)
 						{
-							eu.updateExplosion (exp);
+							eu.updateExplosion (exp, timeElapsed);
 						}
 					}
 					
@@ -425,7 +425,7 @@ class CanvasThread extends Thread {
 					{
 						if (eu != null)
 						{
-							eu.updateExplosion (exp);
+							eu.updateExplosion (exp, timeElapsed);
 						}
 					}
 					
