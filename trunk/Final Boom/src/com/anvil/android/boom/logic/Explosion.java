@@ -57,5 +57,10 @@ public abstract class Explosion {
 		return mParent;
 	}
 	
+	public PointF getStartingPosition ()
+	{
+		return mStartingPos;
+	}
+	
 	public abstract void drawExplosion (Canvas canvas, int timeElapsed);		//Renders the Explosion on the screen
 } //End of class Explosion
