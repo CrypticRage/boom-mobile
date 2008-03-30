@@ -105,6 +105,9 @@ class CanvasThread extends Thread {
 					//Start off from the center base
 					GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_WAVE_EXPLOSION_RADIUS,
 															240, 320);
+					//GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_WAVE_EXPLOSION_RADIUS, 
+					//		xCoord, yCoord);
+					
 					m1.setVelocity (50);
 					m1.setTargetPos (new PointF (xCoord, yCoord));
 					m1.setState (GameObject.STATE_ALIVE);
