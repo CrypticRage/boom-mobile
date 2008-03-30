@@ -8,6 +8,10 @@ import com.anvil.android.boom.particles.BlastEmitter2D;
 
 public class WaveExplosion extends Explosion {
 	
+	//TODO: Need to figure out if the velocity range 
+	//[0, 100] is appropriate
+	public static int DEFAULT_WAVE_EXPLOSION_VELOCITY = 25; 
+	
 	public static final int DEFAULT_WAVE_EXPLOSION_RADIUS = 60;
 
 	protected int mCurrentRadius;

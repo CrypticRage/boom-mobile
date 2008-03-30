@@ -2,5 +2,5 @@ package com.anvil.android.boom.logic;
 
 public abstract class ExplosionUpdater {
 
-	public abstract void updateExplosion (Explosion explosion);
+	public abstract void updateExplosion (Explosion explosion, int timeElapsed);
 }
