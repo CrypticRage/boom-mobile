@@ -2,6 +2,7 @@ package com.anvil.android.boom.particles;
 
 import android.graphics.Canvas;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 //import com.anvil.android.util.*;
 
@@ -10,9 +11,11 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 	public static final int DEAD = 0;
 	public static final int ALIVE = 1;
 	
-	private float radius;
+	private float maxRadius = 0.0f;
+	private float radius = 0.0f;
+	private float radVelocity = 0.0f;
 	
-	public BlastEmitter2D(float x, float y, Bitmap sprite) {
+	public BlastEmitter2D(float x, float y, float radVel, float maxRad, Bitmap sprite) {
 		super(1, x, y);
 
 		SpriteParticle2D p = new SpriteParticle2D(x, y, sprite);
@@ -22,7 +25,11 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 		liveCount = 1;
 		status = ALIVE;
 		
+		maxRadius = maxRad;
+		radVelocity = radVel;
+		
 		paint.setAntiAlias(true);
+		paint.setColor(Color.RED);
 	}
 
 	public void newParticle(Particle2D particle) {
@@ -58,6 +65,11 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 				liveCount--;
 				status = DEAD;
 			}				
+		
+			radius += time*radVelocity;
+			if (radius >= maxRadius) {
+				radius = maxRadius;
+			}
 		}
 	}
 	
@@ -65,11 +77,12 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 		if (status == ALIVE) {
 			canvas.save();
 			SpriteParticle2D p = (SpriteParticle2D)livePool.get(0);
-			SpriteInstance tempSprite = p.sprite;
+			//SpriteInstance tempSprite = p.sprite;
 			paint.setAlpha(p.alpha);
-			canvas.translate(p.x, p.y);
-			canvas.rotate(0, this.x, this.y);
-			canvas.drawBitmap(tempSprite.sprite, null, tempSprite.getDrawBox(), this.paint);
+			//canvas.translate(p.x, p.y);
+			canvas.drawCircle(p.x, p.y, radius, paint);
+			//canvas.rotate(0, this.x, this.y);
+			//canvas.drawBitmap(tempSprite.sprite, null, tempSprite.getDrawBox(), this.paint);
 			canvas.restore();			
 		}
 	}
