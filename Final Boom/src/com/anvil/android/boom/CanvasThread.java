@@ -46,7 +46,8 @@ class CanvasThread extends Thread {
 	private int elapsedTime;        
     
 	/* Camera Variables */
-
+	private float screenHeight = 0.0f;
+	private float screenWidth = 0.0f;
 	
 	protected MotionEventHandler mMotionEventHandler;
 	
@@ -96,6 +97,9 @@ class CanvasThread extends Thread {
 		mFriendlyMissiles = new ArrayList<GameObject> ();
 		mEnemyMissiles = new ArrayList<GameObject> ();
 		mBases = new ArrayList<GameBase> ();
+		
+		screenWidth = (mHolder.getSurfaceFrame()).width();
+		screenHeight = (mHolder.getSurfaceFrame()).height();
 		
 		mSem = new Semaphore (1, true);
     }
