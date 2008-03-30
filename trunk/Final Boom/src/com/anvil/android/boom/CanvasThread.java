@@ -23,6 +23,8 @@ import com.anvil.android.boom.logic.LineSolver;
 import com.anvil.android.boom.logic.MotionSolver;
 import com.anvil.android.boom.logic.Physics;
 import com.anvil.android.boom.logic.WaveExplosion;
+import com.anvil.android.boom.logic.scoring.StatusUpdateMessage;
+import com.anvil.android.boom.logic.scoring.ScoreCalculator;
 import com.anvil.android.boom.particles.SmokeEmitter2D;
 import com.anvil.android.boom.util.StopWatch;
 
@@ -209,7 +211,7 @@ class CanvasThread extends Thread {
 		
 		Message msg = mMotionEventHandler.obtainMessage (GlobalData.ENEMY_MISSILE_GENERATION);
         msg.target = mMotionEventHandler;
-        mMotionEventHandler.sendMessageDelayed (msg, 500);
+        mMotionEventHandler.sendMessageDelayed (msg, 1000);
     }
     
     private void updateFriendlyProjectiles (int timeElapsed)
@@ -246,12 +248,20 @@ class CanvasThread extends Thread {
 							m.setState (GameObject.STATE_DYING);
 							
 							//Don't want to re-activate a dead object
-							if (otherMissile.getState () != GameObject.STATE_DEAD)
+							if (otherMissile.getState () == GameObject.STATE_ALIVE)
 							{
 								otherMissile.setState (GameObject.STATE_DYING);
 								
-								Log.i ("Missile collision:", "" + m + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
-								//TODO: Calculate the score for this missile
+//								Log.i ("Missile collision:", "" + m + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
+
+								//Calculate the score for this missile
+								int baseScore = m.getScoreValue ();
+								StatusUpdateMessage scoreMsg = ScoreCalculator.calculateMissileScore (baseScore,
+										  															  ScoreCalculator.PROXIMITY_MULTIPLIER_VALUE);
+								Handler uiThreadHandler = GlobalData.uiThreadHandler;
+					        	Message msg = uiThreadHandler.obtainMessage (GlobalData.STATUS_UPDATE_EVENT_TYPE, scoreMsg);
+					        	msg.target = uiThreadHandler;
+					        	uiThreadHandler.sendMessage (msg);
 							}
 						}
 					}
@@ -298,18 +308,47 @@ class CanvasThread extends Thread {
 						if (e instanceof WaveExplosion)
 						{
 							WaveExplosion wave = (WaveExplosion) e;
+							float waveRadius = wave.getCurrentRadius ();
 
 							//Our wave explosion hit something
-							if (coreDistance <= wave.getCurrentRadius ())
+							if (coreDistance <= waveRadius)
 							{
 								//Don't want to re-activate a dead object
-								if (otherMissile.getState () != GameObject.STATE_DEAD)
+								if (otherMissile.getState () == GameObject.STATE_ALIVE)
 								{
 									otherMissile.setState (GameObject.STATE_DYING);
 									
-									//TODO: Calculate the score for this missile
+									//Calculate the score for this missile
+//									Log.i ("Explosion collision:", "" + e + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
 									
-									Log.i ("Explosion collision:", "" + e + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
+									//Calculate the score for this missile
+									int baseScore = m.getScoreValue ();
+									
+									float maxRadius = wave.getExplosionRadius ();
+									float halfMaxRadius = maxRadius / 2;
+									float multiplier = 0;
+									
+									if (waveRadius < halfMaxRadius)
+									{
+										float radiusFraction = waveRadius / halfMaxRadius;
+										float reciprocol = 1 - radiusFraction;
+										
+										multiplier = ScoreCalculator.HALF_MAX_RADIUS_MULTIPLIER_VALUE + reciprocol;
+									}
+									else
+									{
+										float radiusFraction = waveRadius / maxRadius;
+										float reciprocol = 1 - radiusFraction;
+										
+										multiplier = ScoreCalculator.BASE_SCORE_MULTIPLIER_VALUE + reciprocol;
+									}
+									
+									StatusUpdateMessage scoreMsg = ScoreCalculator.calculateMissileScore (baseScore,
+																										  multiplier);
+									Handler uiThreadHandler = GlobalData.uiThreadHandler;
+						        	Message msg = uiThreadHandler.obtainMessage (GlobalData.STATUS_UPDATE_EVENT_TYPE, scoreMsg);
+						        	msg.target = uiThreadHandler;
+						        	uiThreadHandler.sendMessage (msg);
 								}
 							}
 						}
@@ -344,14 +383,14 @@ class CanvasThread extends Thread {
 						
 						if (cleanUp)
 						{
-							Log.i ("Removing missile:", "" + m);
+//							Log.i ("Removing missile:", "" + m);
 							mFriendlyMissiles.remove (m);
 							i--;
 						}
 					}
 					else
 					{
-						Log.i ("Removing missile:", "" + m);
+//						Log.i ("Removing missile:", "" + m);
 						mFriendlyMissiles.remove (m);
 						i--;
 					}
@@ -493,12 +532,14 @@ class CanvasThread extends Thread {
 						
 						if (cleanUp)
 						{
+//							Log.i ("Removing missile:", "" + m);
 							mEnemyMissiles.remove (m);
 							i--;
 						}
 					}
 					else
 					{
+//						Log.i ("Removing missile:", "" + m);
 						mEnemyMissiles.remove (m);
 						i--;
 					}

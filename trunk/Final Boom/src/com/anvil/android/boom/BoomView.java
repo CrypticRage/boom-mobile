@@ -13,6 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 class BoomView extends SurfaceView implements SurfaceHolder.Callback {
     SurfaceHolder mHolder;
@@ -30,14 +31,16 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		public void handleMessage (Message msg)
 		{
-			//TODO: Extract StatusUpdate message type
-			//and update the score or w/e
+			//Extract StatusUpdate message type and update the score
 			switch (msg.what)
 			{
 				case GlobalData.STATUS_UPDATE_EVENT_TYPE:
+					
 					String newStatus;
 					StatusUpdateMessage statusMsg = (StatusUpdateMessage) msg.obj;
 					int gameScore = GlobalData.gameScore; 
+					
+//					Log.i ("StatusEventHandler: ", "Received score change: " + statusMsg.mScoreChange);
 					
 					//Update the running score total
 					gameScore += (statusMsg.mScoreChange);
@@ -130,7 +133,7 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
         	Message msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, tempPoint);
 
             msg.target = handler;           
-            handler.sendMessageAtFrontOfQueue(msg);	
+            handler.sendMessage (msg);	
     	}
         return true;
     }

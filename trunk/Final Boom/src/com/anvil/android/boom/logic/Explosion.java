@@ -52,6 +52,11 @@ public abstract class Explosion {
 			mExplosionVelocity = Physics.VELOCITY_MIN;
 	}
 	
+	public float getExplosionRadius ()
+	{
+		return mExplosionRadius;
+	}
+	
 	public GameMissile getParent ()
 	{
 		return mParent;

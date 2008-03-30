@@ -24,7 +24,7 @@ public class GlobalData {
 	public static final int MAX_ZOOM = 1;
 	public static volatile int gameState = MIN_ZOOM;
 	
-	public static volatile int gameScore; 
+	public static volatile int gameScore = 0; 
 	public static volatile String bottomStatusText;
 	
 	public static final int MOTION_EVENT_TYPE = 1;
