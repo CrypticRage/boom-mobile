@@ -22,7 +22,7 @@ public class SmokeEmitter2D extends ParticleEmitter2D {
 		this.scatter = 1.0f;
 		this.hscatter = 3.0f;
 		this.vscatter = 3.0f;
-		this.rate = 60000;
+		this.rate = 250000;
         
 		paint.setAntiAlias(true);
 	}
@@ -109,7 +109,7 @@ public class SmokeEmitter2D extends ParticleEmitter2D {
 			SpriteInstance tempSprite = p.sprite;
 			paint.setAlpha(p.alpha);
 			canvas.translate(p.x, p.y);
-			canvas.rotate(0, this.x, this.y);
+			//canvas.rotate(0, this.x, this.y);
 			canvas.drawBitmap(tempSprite.sprite, null, tempSprite.getDrawBox(), this.paint);
 			canvas.restore();
         }
