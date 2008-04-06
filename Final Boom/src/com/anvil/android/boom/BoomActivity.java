@@ -84,16 +84,17 @@ public class BoomActivity extends Activity {
     }   
     
     private void loadSprites() {
-    	GlobalData.sprites = new Bitmap[4];
+    	GlobalData.sprites = new Bitmap[5];
     	GlobalData.sprites[0] = BitmapFactory.decodeResource(getResources(),
     			R.drawable.cloud_tiny);
     	GlobalData.sprites[1] = BitmapFactory.decodeResource(getResources(),
-    			R.drawable.green_rocket); 	
+    			R.drawable.friendly_missile); 	
     	GlobalData.sprites[2] = BitmapFactory.decodeResource(getResources(),
     			R.drawable.blast); 
     	GlobalData.sprites[3] = BitmapFactory.decodeResource(getResources(),
     			R.drawable.base);
- 
+    	GlobalData.sprites[4] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.enemy_missile); 
     	
     	GlobalData.background = BitmapFactory.decodeResource(getResources(),
     			R.drawable.sundown);
