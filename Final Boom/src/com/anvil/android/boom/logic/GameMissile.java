@@ -14,7 +14,7 @@ public abstract class GameMissile extends GameObject {
 	
 	public static final int DEFAULT_NUM_SMOKE_PARTICLES = 30;
 	public static final float DEFAULT_PROXIMITY_RADIUS = 5;
-	public static final float DEFAULT_MISSILE_VELOCITY = 50;
+	public static final float DEFAULT_FRIENDLY_MISSILE_VELOCITY = 50;
 	
 	public static final int DEFAULT_SCORE_VALUE = 100;
 	
@@ -41,7 +41,7 @@ public abstract class GameMissile extends GameObject {
 		mPointsAward = DEFAULT_SCORE_VALUE;
 	}
 	
-	public GameMissile (float radius, float startingX, float startingY)
+	public GameMissile (float radius, float startingX, float startingY, boolean friendly)
 	{
 		mExplosionRadius = radius;
 		mProximityRadius = DEFAULT_PROXIMITY_RADIUS;
@@ -49,8 +49,17 @@ public abstract class GameMissile extends GameObject {
 		mStartingPos = new PointF (startingX, startingY);
 		mCurrentPos = new PointF (startingX, startingY);
 		
-		mSprite = new SpriteInstance(GlobalData.sprites[1]);
+		if (friendly)
+		{
+			mSprite = new SpriteInstance(GlobalData.sprites[1]);
+		}
+		else
+		{
+			mSprite = new SpriteInstance(GlobalData.sprites[4]);
+		}
+		
 		mSprite.setScale(0.20f);
+		mSprite.setRadius (12);
 		
 		//TODO: Need to change so we're not accessing a specific index in the sprite array
 		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES, startingX, startingY, GlobalData.sprites[0]);

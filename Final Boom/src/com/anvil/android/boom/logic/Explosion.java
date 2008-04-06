@@ -12,14 +12,14 @@ public abstract class Explosion {
 
 	protected float mExplosionVelocity;		//Velocity explosion travels outward
 	
-	protected GameMissile mParent;
+	protected GameObject mParent;
 	
 	
 	public Explosion ()
 	{
 	}
 
-	public Explosion (GameMissile parent)
+	public Explosion (GameObject parent)
 	{
 		mStartingPos = new PointF (0, 0);
 		mExplosionRadius = 0;
@@ -28,7 +28,7 @@ public abstract class Explosion {
 		mParent = parent;
 	}
 	
-	public Explosion (float x, float y, float radius, float velocity, GameMissile parent)
+	public Explosion (float x, float y, float radius, float velocity, GameObject parent)
 	{
 		mStartingPos = new PointF (x, y);
 		mExplosionRadius = radius;
@@ -57,7 +57,7 @@ public abstract class Explosion {
 		return mExplosionRadius;
 	}
 	
-	public GameMissile getParent ()
+	public GameObject getParent ()
 	{
 		return mParent;
 	}
