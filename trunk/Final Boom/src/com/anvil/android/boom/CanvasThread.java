@@ -671,6 +671,9 @@ class CanvasThread extends Thread {
     	{
     		//TODO: Game Over
 //    		Log.i ("updateBases: ", "Game Over");
+    		mDone = true;
+    		
+    		
     	}
     } //End of updateBases
 
