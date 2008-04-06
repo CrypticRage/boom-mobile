@@ -102,7 +102,9 @@ class CanvasThread extends Thread {
 		screenHeight = (mHolder.getSurfaceFrame()).height();
 		
 		//Create base(s)
-		GameBase base = new GameBase (240, 320, GameBase.DEFAULT_BASE_HIT_POINTS);
+		GameBase base = new GameBase (240, 320,
+									  GameBase.DEFAULT_BASE_RADIUS,
+									  GameBase.DEFAULT_BASE_HIT_POINTS);
 		base.setState (GameObject.STATE_ALIVE);
 		mBases.add (base);
 		
@@ -168,10 +170,10 @@ class CanvasThread extends Thread {
     private void createFriendlyMissile (float xCoord, float yCoord)
     {
 		//Start off from the center base
-//		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_WAVE_EXPLOSION_RADIUS,
-//												240, 320);
 		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
-												xCoord, yCoord);
+												240, 320);
+//		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
+//												xCoord, yCoord);
 		m1.setVelocity (GameMissile.DEFAULT_MISSILE_VELOCITY);
 		m1.setTargetPos (new PointF (xCoord, yCoord));
 		m1.setState (GameObject.STATE_ALIVE);
@@ -488,6 +490,7 @@ class CanvasThread extends Thread {
 						PointF otherCurrentPos = base.getCurrentPos ();
 						double coreDistance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
 						Explosion e = m.getExplosion ();
+						float baseRadius = base.getBaseRadius (); 
 						
 						if (e instanceof WaveExplosion)
 						{
@@ -495,6 +498,9 @@ class CanvasThread extends Thread {
 							float previousRadius = wave.getPreviousRadius ();
 							float currentRadius = wave.getCurrentRadius ();
 
+							//Subtract the base radius
+							coreDistance -= baseRadius;
+							
 							//Our wave explosion hit something
 							if (coreDistance <= currentRadius &&
 								coreDistance > previousRadius)
