@@ -13,9 +13,9 @@ public class GameMissileNormal extends GameMissile {
 		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
 	}
 	
-	public GameMissileNormal (float explosionRadius, float startingX, float startingY)
+	public GameMissileNormal (float explosionRadius, float startingX, float startingY, boolean friendly)
 	{
-		super (explosionRadius, startingX, startingY);
+		super (explosionRadius, startingX, startingY, friendly);
 		
 		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
 	}

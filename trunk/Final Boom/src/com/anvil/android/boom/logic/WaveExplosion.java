@@ -22,7 +22,7 @@ public class WaveExplosion extends Explosion {
 	BlastEmitter2D mBlastEmitter;
 
 	
-	public WaveExplosion (GameMissile parent)
+	public WaveExplosion (GameObject parent)
 	{
 		super (parent);
 		
@@ -32,7 +32,7 @@ public class WaveExplosion extends Explosion {
 		mBlastEmitter = null;
 	}
 	
-	public WaveExplosion (float x, float y, float radius, float velocity, GameMissile parent)
+	public WaveExplosion (float x, float y, float radius, float velocity, GameObject parent)
 	{
 		super (x, y, radius, velocity, parent);
 		

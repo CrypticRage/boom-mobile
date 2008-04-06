@@ -11,9 +11,9 @@ public class GameMissileShrapnel extends GameMissile {
 		super ();
 	}
 	
-	public GameMissileShrapnel (int explosionRadius, float startingX, float startingY)
+	public GameMissileShrapnel (int explosionRadius, float startingX, float startingY, boolean friendly)
 	{
-		super (explosionRadius, startingX, startingY);
+		super (explosionRadius, startingX, startingY, friendly);
 	}
 	
 	@Override

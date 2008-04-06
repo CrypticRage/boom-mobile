@@ -128,12 +128,13 @@ class CanvasThread extends Thread {
         	// Lock the surface, this returns a Canvas that can
             // be used to render into.
             Canvas canvas = holder.lockCanvas();
-                       
+
             canvas.drawColor(Color.BLACK);
             
             updateProjectiles(elapsedTime);
             
             drawProjectiles (canvas, mPaint, elapsedTime);
+            drawBases (canvas, mPaint, elapsedTime);
 
             frameCount++; 	        
 	                   
@@ -171,10 +172,10 @@ class CanvasThread extends Thread {
     {
 		//Start off from the center base
 		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
-												240, 320);
+												240, 320, true);
 //		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
 //												xCoord, yCoord);
-		m1.setVelocity (GameMissile.DEFAULT_MISSILE_VELOCITY);
+		m1.setVelocity (GameMissile.DEFAULT_FRIENDLY_MISSILE_VELOCITY);
 		m1.setTargetPos (new PointF (xCoord, yCoord));
 		m1.setState (GameObject.STATE_ALIVE);
 		
@@ -186,7 +187,25 @@ class CanvasThread extends Thread {
 		try
 		{
 			mSem.acquire ();
-			mFriendlyMissiles.add (m1);
+			
+			boolean stillAlive = false;
+			
+			//Make sure at least one base is still alive before launching
+			for (int i = 0; i < mBases.size (); i++)
+			{
+				GameBase base = (GameBase) mBases.get (i);
+				
+				if (base.getState () == GameObject.STATE_ALIVE)
+				{
+					stillAlive = true;
+				}
+			}
+			
+			if (stillAlive)
+			{
+				mFriendlyMissiles.add (m1);
+			}
+			
 			mSem.release ();
 		}
 		catch (InterruptedException e)
@@ -201,10 +220,11 @@ class CanvasThread extends Thread {
     	Random generator = new Random (System.currentTimeMillis ());
     	float startingX = generator.nextInt (480);
     	float endingX = generator.nextInt (480);
+    	int missileVelocity = generator.nextInt (25) + 20;
     	
 		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS,
-												startingX, 0);
-		m1.setVelocity (25);
+												startingX, 0, false);
+		m1.setVelocity (missileVelocity);
 		m1.setTargetPos (new PointF (endingX, 320));
 		m1.setState (GameObject.STATE_ALIVE);
 		
@@ -429,6 +449,8 @@ class CanvasThread extends Thread {
 						PointF otherCurrentPos = base.getCurrentPos ();
 						double distance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
 						
+						distance -= base.getBaseRadius ();
+						
 						//We just smacked into something
 						if (distance <= m.getProximityRadius ())
 						{
@@ -518,8 +540,8 @@ class CanvasThread extends Thread {
 									//If the base just died
 									if (baseHP <= 0)
 									{
-										Log.i ("updateEnemyProjectiles: ", "Base dead");
-										base.setState (GameObject.STATE_DEAD);
+										Log.i ("updateEnemyProjectiles: ", "Base dying");
+										base.setState (GameObject.STATE_DYING);
 									}
 								}
 							}
@@ -571,29 +593,86 @@ class CanvasThread extends Thread {
 		} //End of for loop
     } //End of updateEnemyProjectiles
     
-    private void healthCheckBases ()
+    private void updateBases (int timeElapsed)
     {
     	for (int i = 0; i < mBases.size (); i++)
-    	{
-    		GameBase base = (GameBase) mBases.get (i);
-    		switch (base.getState ())
-    		{
-    			//The only case we care about is when the base is dead
-    			case GameObject.STATE_DEAD:
-    				mBases.remove (i);
-    				i--;
-    				break;
-    				
-    			default:
-    				break;
-    		}
-    	}
+		{
+			GameBase base = (GameBase) mBases.get (i);
+			ExplosionUpdater eu = base.getExplosionUpdater ();
+			
+			//Update positions and explosions
+			switch (base.getState ())
+			{
+				case GameObject.STATE_ALIVE:
+					break;
+					
+				case GameObject.STATE_DYING:
+					Explosion exp = base.getExplosion ();
+					
+					//Important to only have one explosion creation point
+					//since we're setting the state to DYING in multiple places
+					if (exp == null)
+					{
+						base.createExplosion ();
+						eu = base.getExplosionUpdater ();
+					}
+					//Don't want to update an explosion if we just created it
+					else
+					{
+						if (eu != null)
+						{
+							eu.updateExplosion (exp, timeElapsed);
+						}
+					}
+					break;
+					
+				case GameObject.STATE_DEAD:
+					//Verify each child is dead as well
+					ArrayList<GameObject> children = base.getChildren ();
+					
+					//If an object has no children, just remove it
+					if (children != null)
+					{
+						boolean cleanUp = true;
+						
+						for (int j = 0; j < children.size (); j++)
+						{
+							GameObject child = children.get (j);
+							
+							if (child.getState () == GameObject.STATE_DEAD)
+							{
+								children.remove (child);
+								j--;
+							}
+							else
+							{
+								cleanUp = false;
+							}
+						}
+						
+						if (cleanUp)
+						{
+//							Log.i ("Removing missile:", "" + m);
+							mBases.remove (base);
+							i--;
+						}
+					}
+					else
+					{
+//						Log.i ("Removing missile:", "" + m);
+						mBases.remove (base);
+						i--;
+					}
+					break;
+			} //End of switch			
+		} //End of for loop
     	
     	if (mBases.size () == 0)
     	{
     		//TODO: Game Over
+//    		Log.i ("updateBases: ", "Game Over");
     	}
-    }
+    } //End of updateBases
 
     private void updateProjectiles(int timeElapsed)
 	{
@@ -603,7 +682,7 @@ class CanvasThread extends Thread {
     		
     		updateFriendlyProjectiles (timeElapsed);
     		updateEnemyProjectiles (timeElapsed);
-    		healthCheckBases ();
+    		updateBases (timeElapsed);
     		
     		mSem.release ();
     	} //End of try
@@ -687,6 +766,45 @@ class CanvasThread extends Thread {
 			System.err.println ("InterruptedException in updateProjectiles: " + e.getMessage ());
 		}
     } //End of drawProjectiles
+    
+    private void drawBases (Canvas canvas, Paint paint, int timeElapsed)
+    {
+    	try
+    	{
+    		mSem.acquire ();
+    	
+	    	for (int i = 0; i < mBases.size (); i++)
+			{
+				GameBase base = (GameBase) mBases.get (i);
+				
+				//Draw positions and explosions
+				switch (base.getState ())
+				{
+					case GameObject.STATE_ALIVE:
+	                    base.draw(canvas, paint);
+						break;
+						
+					case GameObject.STATE_DYING:
+						Explosion ex = base.getExplosion ();
+						
+						if (ex != null)
+						{
+							ex.drawExplosion (canvas, timeElapsed);
+						}
+						break;
+						
+					default:
+						break;
+				}
+			} //End of for loop
+	    	
+	    	mSem.release ();
+	    } //End of try
+		catch (InterruptedException e)
+		{
+			System.err.println ("InterruptedException in updateBases: " + e.getMessage ());
+		}
+    } //End of drawBases
     
     void sendScoreUpdate (int baseScore, float multiplier)
     {
