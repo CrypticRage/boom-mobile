@@ -3,15 +3,21 @@ package com.anvil.android.boom.logic;
 
 
 public class GameMissileNormal extends GameMissile {
-
+	
+	public static final int DEFAULT_NORMAL_MISSILE_DAMAGE = 100;
+	
 	public GameMissileNormal()
 	{
 		super ();
+		
+		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
 	}
 	
 	public GameMissileNormal (float explosionRadius, float startingX, float startingY)
 	{
 		super (explosionRadius, startingX, startingY);
+		
+		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
 	}
 	
 	@Override

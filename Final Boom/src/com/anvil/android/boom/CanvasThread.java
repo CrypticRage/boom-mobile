@@ -101,6 +101,12 @@ class CanvasThread extends Thread {
 		screenWidth = (mHolder.getSurfaceFrame()).width();
 		screenHeight = (mHolder.getSurfaceFrame()).height();
 		
+		//Create base(s)
+		GameBase base = new GameBase (240, 320, GameBase.DEFAULT_BASE_HIT_POINTS);
+		base.setState (GameObject.STATE_ALIVE);
+		mBases.add (base);
+		
+		//Create a new binary semaphore
 		mSem = new Semaphore (1, true);
     }
 
@@ -112,6 +118,9 @@ class CanvasThread extends Thread {
     	SurfaceHolder holder = mHolder;
     	
     	createEnemyMissile ();
+    	
+    	//TODO: Hack to get the score up
+    	sendScoreUpdate (0, 1);
         
         while (!mDone) {       	          	
         	// Lock the surface, this returns a Canvas that can
@@ -162,7 +171,7 @@ class CanvasThread extends Thread {
 //		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_WAVE_EXPLOSION_RADIUS,
 //												240, 320);
 		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
-				xCoord, yCoord);
+												xCoord, yCoord);
 		m1.setVelocity (GameMissile.DEFAULT_MISSILE_VELOCITY);
 		m1.setTargetPos (new PointF (xCoord, yCoord));
 		m1.setState (GameObject.STATE_ALIVE);
@@ -229,7 +238,6 @@ class CanvasThread extends Thread {
 			//Update positions and explosions
 			switch (m.getState ())
 			{
-				case GameObject.STATE_LARVAL:
 				case GameObject.STATE_ALIVE:
 					if (ms != null)
 					{
@@ -259,13 +267,7 @@ class CanvasThread extends Thread {
 //								Log.i ("Missile collision:", "" + m + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
 
 								//Calculate the score for this missile
-								int baseScore = m.getScoreValue ();
-								StatusUpdateMessage scoreMsg = ScoreCalculator.calculateMissileScore (baseScore,
-										  															  ScoreCalculator.PROXIMITY_MULTIPLIER_VALUE);
-								Handler uiThreadHandler = GlobalData.uiThreadHandler;
-					        	Message msg = uiThreadHandler.obtainMessage (GlobalData.STATUS_UPDATE_EVENT_TYPE, scoreMsg);
-					        	msg.target = uiThreadHandler;
-					        	uiThreadHandler.sendMessage (msg);
+								sendScoreUpdate (m.getScoreValue (), ScoreCalculator.PROXIMITY_MULTIPLIER_VALUE);
 							}
 						}
 					}
@@ -347,12 +349,7 @@ class CanvasThread extends Thread {
 										multiplier = ScoreCalculator.BASE_SCORE_MULTIPLIER_VALUE + reciprocol;
 									}
 									
-									StatusUpdateMessage scoreMsg = ScoreCalculator.calculateMissileScore (baseScore,
-																										  multiplier);
-									Handler uiThreadHandler = GlobalData.uiThreadHandler;
-						        	Message msg = uiThreadHandler.obtainMessage (GlobalData.STATUS_UPDATE_EVENT_TYPE, scoreMsg);
-						        	msg.target = uiThreadHandler;
-						        	uiThreadHandler.sendMessage (msg);
+									sendScoreUpdate (baseScore, multiplier);
 								}
 							}
 						}
@@ -414,39 +411,44 @@ class CanvasThread extends Thread {
 			//Update positions and explosions
 			switch (m.getState ())
 			{
-				case GameObject.STATE_LARVAL:
 				case GameObject.STATE_ALIVE:
 					if (ms != null)
 					{
 						ms.solveMotion (m, timeElapsed);
 					}
 					
-//					for (int j = 0; j < mMissiles.size (); j++)
-//					{
-//						GameMissile otherMissile = (GameMissile) mMissiles.get (j);
-//						
-//						//If we're not dealing with the same object
-//						if (m != otherMissile)
-//						{
-//							//Calculate the distance between the current missile
-//							//and the second one
-//							PointF mCurrentPos = m.getCurrentPos ();
-//							PointF otherCurrentPos = otherMissile.getCurrentPos ();
-//							double distance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
-//							
-//							//We just smacked into something
-//							if (distance <= m.getProximityRadius ())
+					for (int j = 0; j < mBases.size (); j++)
+					{
+						GameBase base = (GameBase) mBases.get (j);
+						
+						//Calculate the distance between the current missile
+						//and the base
+						PointF mCurrentPos = m.getCurrentPos ();
+						PointF otherCurrentPos = base.getCurrentPos ();
+						double distance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
+						
+						//We just smacked into something
+						if (distance <= m.getProximityRadius ())
+						{
+							m.setState (GameObject.STATE_DYING);
+							
+							//TODO: Should the base take damage from the actual impact?
+//							if (base.getState () == GameObject.STATE_ALIVE)
 //							{
-//								m.setState (GameObject.STATE_DYING);
+//								int baseHP = base.getHitPoints ();
+//								int missileDamage = m.getExplosionDamage ();
 //								
-//								//Don't want to re-activate a dead object
-//								if (otherMissile.getState () != GameObject.STATE_DEAD)
+//								baseHP -= missileDamage;
+//								base.setHitPoints (baseHP);
+//								
+//								//If the base just died
+//								if (baseHP <= 0)
 //								{
-//									otherMissile.setState (GameObject.STATE_DYING);
+//									base.setState (GameObject.STATE_DEAD);
 //								}
 //							}
-//						}
-//					}
+						}
+					}
 					break;
 					
 				case GameObject.STATE_DYING:
@@ -476,38 +478,49 @@ class CanvasThread extends Thread {
 						}
 					}
 					
-//					for (int j = 0; j < mMissiles.size (); j++)
-//					{
-//						GameObject otherMissile = mMissiles.get (j);
-//
-//						//If we're not dealing with the same object
-//						if (m != otherMissile)
-//						{
-//							//Calculate the distance between the current missile
-//							//and the second one
-//							PointF mCurrentPos = m.getCurrentPos ();
-//							PointF otherCurrentPos = otherMissile.getCurrentPos ();
-//							double coreDistance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
-//							Explosion e = m.getExplosion ();
-//							
-//							if (e instanceof WaveExplosion)
-//							{
-//								WaveExplosion wave = (WaveExplosion) e;
-//
-//								//Our wave explosion hit something
-//								if (coreDistance <= wave.getCurrentRadius ())
-//								{
-//									//Don't want to re-activate a dead object
-//									if (otherMissile.getState () != GameObject.STATE_DEAD)
-//									{
-//										otherMissile.setState (GameObject.STATE_DYING);
-//									}
-//								}
-//							}
-//							
-//							//TODO: Add code for shrapnel type explosion
-//						}
-//					}
+					for (int j = 0; j < mBases.size (); j++)
+					{
+						GameBase base = (GameBase) mBases.get (j);
+						
+						//Calculate the distance between the current missile
+						//and the base
+						PointF mCurrentPos = m.getCurrentPos ();
+						PointF otherCurrentPos = base.getCurrentPos ();
+						double coreDistance = Physics.calculateDistance (mCurrentPos, otherCurrentPos);
+						Explosion e = m.getExplosion ();
+						
+						if (e instanceof WaveExplosion)
+						{
+							WaveExplosion wave = (WaveExplosion) e;
+							float previousRadius = wave.getPreviousRadius ();
+							float currentRadius = wave.getCurrentRadius ();
+
+							//Our wave explosion hit something
+							if (coreDistance <= currentRadius &&
+								coreDistance > previousRadius)
+							{
+								if (base.getState () == GameObject.STATE_ALIVE)
+								{
+									int baseHP = base.getHitPoints ();
+									int missileDamage = m.getExplosionDamage ();
+									
+									Log.i ("updateEnemyProjectiles: ", "Base took damage");
+									
+									baseHP -= missileDamage;
+									base.setHitPoints (baseHP);
+									
+									//If the base just died
+									if (baseHP <= 0)
+									{
+										Log.i ("updateEnemyProjectiles: ", "Base dead");
+										base.setState (GameObject.STATE_DEAD);
+									}
+								}
+							}
+						}
+						
+						//TODO: Add code for shrapnel type explosion
+					}
 					break;
 					
 				case GameObject.STATE_DEAD:
@@ -551,6 +564,30 @@ class CanvasThread extends Thread {
 			} //End of switch			
 		} //End of for loop
     } //End of updateEnemyProjectiles
+    
+    private void healthCheckBases ()
+    {
+    	for (int i = 0; i < mBases.size (); i++)
+    	{
+    		GameBase base = (GameBase) mBases.get (i);
+    		switch (base.getState ())
+    		{
+    			//The only case we care about is when the base is dead
+    			case GameObject.STATE_DEAD:
+    				mBases.remove (i);
+    				i--;
+    				break;
+    				
+    			default:
+    				break;
+    		}
+    	}
+    	
+    	if (mBases.size () == 0)
+    	{
+    		//TODO: Game Over
+    	}
+    }
 
     private void updateProjectiles(int timeElapsed)
 	{
@@ -560,6 +597,7 @@ class CanvasThread extends Thread {
     		
     		updateFriendlyProjectiles (timeElapsed);
     		updateEnemyProjectiles (timeElapsed);
+    		healthCheckBases ();
     		
     		mSem.release ();
     	} //End of try
@@ -583,7 +621,6 @@ class CanvasThread extends Thread {
 				//Draw positions and explosions
 				switch (m.getState ())
 				{
-					case GameObject.STATE_LARVAL:
 					case GameObject.STATE_ALIVE:
 						SmokeEmitter2D smokeEmitter = m.getSmokeEmitter ();
 						
@@ -614,7 +651,6 @@ class CanvasThread extends Thread {
 				//Draw positions and explosions
 				switch (m.getState ())
 				{
-					case GameObject.STATE_LARVAL:
 					case GameObject.STATE_ALIVE:
 						SmokeEmitter2D smokeEmitter = m.getSmokeEmitter ();
 						
@@ -645,4 +681,14 @@ class CanvasThread extends Thread {
 			System.err.println ("InterruptedException in updateProjectiles: " + e.getMessage ());
 		}
     } //End of drawProjectiles
+    
+    void sendScoreUpdate (int baseScore, float multiplier)
+    {
+    	StatusUpdateMessage scoreMsg = ScoreCalculator.calculateMissileScore (baseScore,
+				  multiplier);
+		Handler uiThreadHandler = GlobalData.uiThreadHandler;
+		Message msg = uiThreadHandler.obtainMessage (GlobalData.STATUS_UPDATE_EVENT_TYPE, scoreMsg);
+		msg.target = uiThreadHandler;
+		uiThreadHandler.sendMessage (msg);
+    }
 } //End of CanvasThread class

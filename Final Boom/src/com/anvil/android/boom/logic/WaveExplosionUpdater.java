@@ -7,12 +7,17 @@ public class WaveExplosionUpdater extends ExplosionUpdater {
 	{
 		WaveExplosion wave = (WaveExplosion) explosion;
 		float velocityPerUSecond = (wave.mExplosionVelocity / MotionSolver.MICROSECONDS_PER_SECOND) * timeElapsed;
+		float currentRadius = wave.mCurrentRadius;
+		float maxExplosionRadius = wave.mExplosionRadius;
 		
-		wave.mCurrentRadius += velocityPerUSecond;
+		wave.setPreviousRadius (currentRadius);
+		currentRadius += velocityPerUSecond;
+		
+		wave.setCurrentRadius (currentRadius);
 		
 		//Check to see if the explosion has reached its
 		//max radius
-		if (wave.mCurrentRadius >= wave.mExplosionRadius)
+		if (currentRadius >= maxExplosionRadius)
 		{
 			(wave.mParent).setState (GameObject.STATE_DEAD);
 		}

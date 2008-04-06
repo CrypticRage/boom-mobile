@@ -13,13 +13,13 @@ public class WaveExplosion extends Explosion {
 	public static float DEFAULT_WAVE_EXPLOSION_VELOCITY = 120; 
 	
 	public static final float DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS = 45;
-	public static final float DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS = 25;
+	public static final float DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS = 30;
 	public static final float DEFAULT_ENEMY_INTERCEPTED_WAVE_EXPLOSION_RADIUS = 10;
 
 	protected float mCurrentRadius;
+	protected float mPreviousRadius;
 	
 	BlastEmitter2D mBlastEmitter;
-	
 
 	
 	public WaveExplosion (GameMissile parent)
@@ -27,6 +27,7 @@ public class WaveExplosion extends Explosion {
 		super (parent);
 		
 		mCurrentRadius = 0;
+		mPreviousRadius = 0;
 		
 		mBlastEmitter = null;
 	}
@@ -36,6 +37,7 @@ public class WaveExplosion extends Explosion {
 		super (x, y, radius, velocity, parent);
 		
 		mCurrentRadius = 0;
+		mPreviousRadius = 0;
 		
 		//TODO: Need to change so we're not accessing a specific index in the sprite array
 		mBlastEmitter = new BlastEmitter2D(	x,
@@ -51,9 +53,19 @@ public class WaveExplosion extends Explosion {
 		return mCurrentRadius;
 	}
 	
-	public void setCurrentRadius (int radius)
+	public void setCurrentRadius (float radius)
 	{
 		mCurrentRadius = radius;
+	}
+	
+	public float getPreviousRadius ()
+	{
+		return mPreviousRadius;
+	}
+	
+	public void setPreviousRadius (float radius)
+	{
+		mPreviousRadius = radius;
 	}
 	
 	@Override

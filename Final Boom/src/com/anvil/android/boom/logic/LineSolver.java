@@ -47,8 +47,7 @@ public class LineSolver extends MotionSolver {
 		double forceX = 0, forceY = 0;
 		int objectState = object.mState;
 		
-		if (objectState == GameObject.STATE_LARVAL || 
-			objectState == GameObject.STATE_ALIVE)
+		if (objectState == GameObject.STATE_ALIVE)
 		{
 			float objectVelocity = object.getVelocity ();
 			float velocityPerUSecond = (objectVelocity / MotionSolver.MICROSECONDS_PER_SECOND) * timeElapsed;

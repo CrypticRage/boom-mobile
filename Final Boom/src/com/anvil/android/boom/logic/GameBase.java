@@ -2,23 +2,24 @@ package com.anvil.android.boom.logic;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.RectF;
+import android.graphics.PointF;
 
 public class GameBase extends GameObject {
-	RectF baseRect;
 	
-	public GameBase (float left, float top, float right, float bottom)
+	public static final int DEFAULT_BASE_HIT_POINTS = 1000;
+		
+	public GameBase (float startingX, float startingY, int numHitPoints)
 	{
-		baseRect = new RectF (left, top, right, bottom);
+		super ();
+		
+		mCurrentPos = new PointF (startingX, startingY);
+		mStartingPos = new PointF (startingX, startingY);
+		
+		mHitPoints = numHitPoints;
 	}
 	
 	@Override
 	public void draw(Canvas canvas, Paint paint) {
-		Paint redPaint = new Paint();
-        redPaint.setAntiAlias(true);
-        redPaint.setARGB(255, 255, 0, 0);
-        
-        canvas.drawRect(baseRect, redPaint);
 	}
 
 	public void createExplosion ()
