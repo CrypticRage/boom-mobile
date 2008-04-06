@@ -1,8 +1,12 @@
 package com.anvil.android.boom.logic;
 
+import com.anvil.android.boom.GlobalData;
+import com.anvil.android.boom.particles.SpriteInstance;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.RectF;
 
 public class GameBase extends GameObject {
 	
@@ -19,6 +23,9 @@ public class GameBase extends GameObject {
 		mCurrentPos = new PointF (startingX, startingY);
 		mStartingPos = new PointF (startingX, startingY);
 		
+		mSprite = new SpriteInstance(GlobalData.sprites[3]);
+		mSprite.setRadius(radius);
+		
 		mHitPoints = numHitPoints;
 		
 		mBaseRadius = radius;
@@ -31,6 +38,13 @@ public class GameBase extends GameObject {
 	
 	@Override
 	public void draw(Canvas canvas, Paint paint) {
+		RectF tempBox = mSprite.getDrawBox();
+		
+		canvas.save();
+		canvas.translate(mCurrentPos.x, mCurrentPos.y);
+		//canvas.rotate(drawAngle);				
+    	canvas.drawBitmap(mSprite.sprite, null, tempBox, paint);
+		canvas.restore();
 	}
 
 	public void createExplosion ()
