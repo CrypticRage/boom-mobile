@@ -2,9 +2,40 @@ package com.anvil.android.boom.logic;
 
 import android.graphics.PointF;
 
-
 public class LineSolver extends MotionSolver {
 
+	@Override
+	public void solveMotion(GameObject object, int timeElapsed) {
+		PointF curPos = object.mCurrentPos;
+		PointF startingPos = object.mStartingPos;
+		PointF targetPos = object.mTargetPos;
+		PointF velocityVec = object.mVelocityVector;
+		PointF nextPos = new PointF (curPos.x, curPos.y);
+		float scalar = object.mVelocityScalar * timeElapsed * INV_MICROSECONDS_PER_SECOND;
+		int objectState = object.mState;
+		
+		if (objectState == GameObject.STATE_LARVAL ||
+			objectState == GameObject.STATE_ALIVE) {
+				
+				nextPos.x += scalar * velocityVec.x;
+				nextPos.y += scalar * velocityVec.y;
+				
+				//Check if the object has reached its destination or passed it
+				boolean targetReached = Physics.checkCrossing(startingPos, targetPos, nextPos);		
+				
+				if (targetReached)
+				{
+					object.setCurrentPos (targetPos);
+					object.setState (GameObject.STATE_DYING);
+				}
+				else
+				{
+					object.setCurrentPos (nextPos);
+				}	
+			}
+	}
+	
+/*
 	@Override
 	public void solveMotion(GameObject object, int timeElapsed) {
 		PointF curPos = object.mCurrentPos;
@@ -85,4 +116,5 @@ public class LineSolver extends MotionSolver {
 			}
 		}
 	} //End of method solveMotion
+*/
 }//End of class LineSolver

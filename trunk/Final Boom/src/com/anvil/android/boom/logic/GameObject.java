@@ -19,7 +19,8 @@ public abstract class GameObject {
 	protected PointF mCurrentPos;
 	protected PointF mStartingPos;
 	protected PointF mTargetPos;
-	protected float mVelocity;					// Number of units per second
+	protected PointF mVelocityVector;	// Velocity unit vector (direction)
+	protected float mVelocityScalar;	// Velocity scalar (magnitude)
 	
 	// Game rule objects
 	protected int mPointsAward; // How many points for killing this thing.  Negative penalties apply
@@ -74,10 +75,11 @@ public abstract class GameObject {
 	public void setTargetPos(PointF targetPos) {
 		mTargetPos = targetPos;
 		calcDrawAngle();
+		calcInitVelocity();
 	}
 
 	private void calcDrawAngle() {
-		double hyp = Physics.calculateDistance(mStartingPos, mTargetPos);
+		float hyp = Physics.calculateDistance(mStartingPos, mTargetPos);
 		float opp = mStartingPos.y - mTargetPos.y;
 		double tempAngle = Math.asin(opp/hyp);
 		tempAngle = Math.toDegrees(tempAngle);
@@ -92,17 +94,22 @@ public abstract class GameObject {
 		}		
 	}
 	
+	private void calcInitVelocity() {
+		mVelocityVector = PointF.difference(mTargetPos, mStartingPos);
+		mVelocityVector = Physics.normalize(mVelocityVector);
+	}
+	
 	public float getVelocity() {
-		return mVelocity;
+		return mVelocityScalar;
 	}
 	
 	public void setVelocity(float velocity) {
 		if (velocity > Physics.VELOCITY_MIN && velocity < Physics.VELOCITY_MAX)
-			mVelocity = velocity;
+			mVelocityScalar = velocity;
 		else if (velocity > Physics.VELOCITY_MAX)
-			mVelocity = Physics.VELOCITY_MAX;
+			mVelocityScalar = Physics.VELOCITY_MAX;
 		else 
-			mVelocity = Physics.VELOCITY_MIN;
+			mVelocityScalar = Physics.VELOCITY_MIN;
 	}
 
 	public int getPointsAwarded() {
