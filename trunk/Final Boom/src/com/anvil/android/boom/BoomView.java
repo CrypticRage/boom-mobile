@@ -13,7 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+
 
 class BoomView extends SurfaceView implements SurfaceHolder.Callback {
     SurfaceHolder mHolder;

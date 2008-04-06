@@ -18,13 +18,13 @@ public abstract class GameMissile extends GameObject {
 	
 	public static final int DEFAULT_SCORE_VALUE = 100;
 	
+	protected int mExplosionDamage;		//Damage the explosion deals
+	
 	protected float mExplosionRadius;	//Radius of explosion
 	protected float mProximityRadius;	//If a non-friendly is detected within
 									//this radius, trigger explosion
 	
 	protected SmokeEmitter2D mSmokeEmitter;
-	
-	protected int mScoreValue;
 	
 	// TODO find some list type to use.
 	// TODO if a MIRV exists as children in a container, how do the child missiles get
@@ -38,7 +38,7 @@ public abstract class GameMissile extends GameObject {
 		
 		mExplosion = null;
 		
-		mScoreValue = DEFAULT_SCORE_VALUE;
+		mPointsAward = DEFAULT_SCORE_VALUE;
 	}
 	
 	public GameMissile (float radius, float startingX, float startingY)
@@ -57,7 +57,7 @@ public abstract class GameMissile extends GameObject {
 		
 		mExplosion = null;
 		
-		mScoreValue = DEFAULT_SCORE_VALUE;
+		mPointsAward = DEFAULT_SCORE_VALUE;
 	}
 
 	
@@ -67,7 +67,6 @@ public abstract class GameMissile extends GameObject {
 	{
 		switch (this.getState ())
 		{
-			case GameObject.STATE_LARVAL:
 			case GameObject.STATE_ALIVE:
 			{
 				RectF tempBox = mSprite.getDrawBox();
@@ -117,6 +116,11 @@ public abstract class GameMissile extends GameObject {
 	
 	public int getScoreValue ()
 	{
-		return mScoreValue;
+		return mPointsAward;
+	}
+	
+	public int getExplosionDamage ()
+	{
+		return mExplosionDamage;
 	}
 } //End of class GameMissile

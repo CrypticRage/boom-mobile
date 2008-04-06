@@ -37,7 +37,6 @@ public class GameMissileShrapnel extends GameMissile {
 	{
 		switch (this.getState ())
 		{
-			case GameObject.STATE_LARVAL:
 			case GameObject.STATE_ALIVE:
 			{
 
