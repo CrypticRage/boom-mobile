@@ -7,30 +7,36 @@ import com.anvil.android.boom.R;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.ImageButton;
+import android.widget.Button;
+import android.view.View;
 
 public class BoomActivity extends Activity {
-	private TextView topStatusView, bottomStatusView;
+	private TextView topLeftTextView, topMiddleTextView, topRightTextView;
 	private BoomView mPreview;
+	private ImageButton[] buttons;
     
 	// Need handler for callbacks to the UI thread
 	private volatile Handler mHandler = new Handler();
 
     // Create runnable for posting
-    final private Runnable mTopUpdate = new Runnable() {
+    final private Runnable mTopMiddleUpdate = new Runnable() {
         public void run() {
-        	updateTopStatus();
+        	updateTopMiddleText();
         }
     };
     
     // Create runnable for posting
-    final private Runnable mBottomUpdate = new Runnable() {
+    final private Runnable mTopRightUpdate = new Runnable() {
         public void run() {
-        	updateBottomStatus();
+        	updateTopRightText();
         }
     };
     
@@ -45,14 +51,20 @@ public class BoomActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NO_STATUS_BAR,
         		WindowManager.LayoutParams.FLAG_NO_STATUS_BAR); 
     
-        loadSprites();
+        buttons = new ImageButton[2];
         
-        setContentView(R.layout.canvas);
+        setContentView(R.layout.boom);
         mPreview = (BoomView)this.findViewById(R.id.main_canvas);
-        topStatusView = (TextView)this.findViewById(R.id.top_status_bar);
-        bottomStatusView = (TextView)this.findViewById(R.id.bottom_status_bar);
-        updateTopStatus();
-        updateBottomStatus();
+        topMiddleTextView = (TextView)this.findViewById(R.id.top_middle);
+        topRightTextView = (TextView)this.findViewById(R.id.top_right);
+        topLeftTextView = (TextView)this.findViewById(R.id.top_left);
+        
+        createButtons();
+        loadSprites();
+        //loadFonts();     
+
+        updateTopRightText();
+        updateTopMiddleText();
     }
     
     @Override
@@ -70,18 +82,49 @@ public class BoomActivity extends Activity {
         mPreview.pause();
     }
           
-    private void updateTopStatus() {
+    private void updateTopRightText() {
     	//fpsView.setText((1000000.0f / GlobalData.frameTimeMicro) + " fps");
-    	topStatusView.setText((1000000.0f / GlobalData.frameTimeMicro) + " fps\n" + 
+    	topRightTextView.setText((1000000.0f / GlobalData.frameTimeMicro) + " fps\n" + 
     			GlobalData.overTimeMicro + " us \n" +
     			"overCount: " + GlobalData.overCount);
-    	mHandler.postDelayed(mTopUpdate, 1000);
+    	mHandler.postDelayed(mTopMiddleUpdate, 1000);
     }
      
-    private void updateBottomStatus() {
-    	bottomStatusView.setText(GlobalData.bottomStatusText);
-    	mHandler.postDelayed(mBottomUpdate, 1000);
+    private void updateTopMiddleText() {
+    	topMiddleTextView.setText(GlobalData.bottomStatusText);
+    	mHandler.postDelayed(mTopRightUpdate, 2000);
     }   
+    
+    private void createButtons() {
+        buttons[0] = (ImageButton)this.findViewById(R.id.button1);
+        buttons[1] = (ImageButton)this.findViewById(R.id.button2);
+        
+        buttons[0].setBackgroundColor(Color.GRAY);
+        buttons[1].setBackgroundColor(Color.TRANSPARENT);
+        topLeftTextView.setText("Standard Missile");
+        
+        buttons[0].setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                GlobalData.AMMO_TYPE = GlobalData.STANDARD_MISSILE;
+                topLeftTextView.setText("Standard Missile");
+                v.setClickable(false);
+                v.setBackgroundColor(Color.GRAY);
+                buttons[1].setClickable(true);
+                buttons[1].setBackgroundColor(Color.TRANSPARENT);
+            }
+        });
+        
+        buttons[1].setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                GlobalData.AMMO_TYPE = GlobalData.SMART_BOMB;
+                topLeftTextView.setText("Smart Bomb");
+                v.setClickable(false);
+                v.setBackgroundColor(Color.GRAY);
+                buttons[0].setClickable(true);
+                buttons[0].setBackgroundColor(Color.TRANSPARENT);
+            }
+        }); 
+    }
     
     private void loadSprites() {
     	GlobalData.sprites = new Bitmap[5];
@@ -98,5 +141,11 @@ public class BoomActivity extends Activity {
     	
     	GlobalData.background = BitmapFactory.decodeResource(getResources(),
     			R.drawable.sundown);
+    }
+  
+    private void loadFonts() {
+    	Typeface tempType = Typeface.createFromAsset(getAssets(),
+        	"fonts/sample_font.ttf");
+    	topMiddleTextView.setTypeface(tempType);
     }
 }
