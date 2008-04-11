@@ -168,7 +168,7 @@ public abstract class GameObject {
 		mSprite = sprite;
 	}
 
-	abstract public void draw(Canvas canvas, Paint paint);
+	abstract public void draw(Canvas canvas, Paint paint, int timeElapsed);
 	
 	public MotionSolver getMotionSolver() {
 		return mMotionSolver;

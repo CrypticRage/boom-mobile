@@ -6,7 +6,9 @@ public class Physics {
 	public static final float MICROSECONDS_PER_SECOND = 1000000.0f;
 	public static final float INV_MICROSECONDS_PER_SECOND = 1/MICROSECONDS_PER_SECOND;
 	
-	public static final float VELOCITY_MAX = 100.0f;
+	public static final long MILLISECONDS_PER_SECOND = 1000;
+	
+	public static final float VELOCITY_MAX = 500.0f;
 	public static final float VELOCITY_MIN = 0.0f;
 	
 	public static float calculateDistance (PointF p1, PointF p2)

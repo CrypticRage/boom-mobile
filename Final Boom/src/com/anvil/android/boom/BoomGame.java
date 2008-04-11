@@ -16,6 +16,8 @@ import com.anvil.android.boom.logic.ExplosionUpdater;
 import com.anvil.android.boom.logic.GameBase;
 import com.anvil.android.boom.logic.GameMissile;
 import com.anvil.android.boom.logic.GameMissileNormal;
+import com.anvil.android.boom.logic.GameMissileBaseKiller;
+import com.anvil.android.boom.logic.GameMissileSmart;
 import com.anvil.android.boom.logic.GameMissileShrapnel;
 import com.anvil.android.boom.logic.GameObject;
 import com.anvil.android.boom.logic.LineSolver;
@@ -27,13 +29,24 @@ import com.anvil.android.boom.logic.scoring.StatusUpdateMessage;
 import com.anvil.android.boom.particles.SmokeEmitter2D;
 
 public class BoomGame
-{
+{	
+	public static final int MISSILE_RELOAD_TIME = 500;
+	
+	private static final int GAME_DIFFICULTY_EASY = 1;
+	private static final int GAME_DIFFICULTY_MEDIUM = 2;
+	private static final int GAME_DIFFICULTY_HARD = 3;
+	private static final int GAME_DIFFICULTY_INSANE = 4;
+	
 	private Semaphore mSem;					//Semaphore to protect game object array lists
 	private ArrayList<GameObject> mFriendlyMissiles; //Friendly GameMissile objects
 	private ArrayList<GameObject> mEnemyMissiles; //Enemy GameMissile objects
 	private ArrayList<GameBase> mBases; //Friendly GameBase objects
 	
+	private long mGameStartTime;
+	
 	public boolean mDone;
+	
+	private boolean mMissileReloadDone;
 	
 	protected MotionEventHandler mMotionEventHandler;
 	
@@ -56,6 +69,10 @@ public class BoomGame
 					
 				case GlobalData.ENEMY_MISSILE_GENERATION:
 					createEnemyMissile ();
+					break;
+					
+				case GlobalData.FRIENDLY_MISSILE_RELOAD:
+					mMissileReloadDone = true;
 					break;
 					
 				default:
@@ -86,51 +103,85 @@ public class BoomGame
         GlobalData.canvasThreadHandler = mMotionEventHandler;
         
         mDone = false;
+        
+        mGameStartTime = System.currentTimeMillis ();
+        mMissileReloadDone = true;
 	}
 	
 	public void createFriendlyMissile (float xCoord, float yCoord)
     {
-		//Start off from the center base
-		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
-												240, 320, true);
-//		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
-//												xCoord, yCoord);
-		m1.setVelocity (GameMissile.DEFAULT_FRIENDLY_MISSILE_VELOCITY);
-		m1.setTargetPos (new PointF (xCoord, yCoord));
-		m1.setState (GameObject.STATE_ALIVE);
+		GameMissile m1;
 		
-		//TODO: Do we just want to have some sort of general LineSolver
-		//instead of creating a new Solver for each missile?
-		MotionSolver ms1 = new LineSolver ();
-		m1.setMotionSolver(ms1);
-		
-		try
+		if (mMissileReloadDone)
 		{
-			mSem.acquire ();
+			mMissileReloadDone = false;
 			
-			boolean stillAlive = false;
-			
-			//Make sure at least one base is still alive before launching
-			for (int i = 0; i < mBases.size (); i++)
+			//TODO: Check global munitions type
+			if (true)
 			{
-				GameBase base = (GameBase) mBases.get (i);
+				//Start off from the center base
+				m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
+														240, 320, true);
+//				GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
+//														xCoord, yCoord);
+				m1.setVelocity (GameMissile.DEFAULT_FRIENDLY_MISSILE_VELOCITY);
+				m1.setTargetPos (new PointF (xCoord, yCoord));
+				m1.setState (GameObject.STATE_ALIVE);
 				
-				if (base.getState () == GameObject.STATE_ALIVE)
-				{
-					stillAlive = true;
-				}
+				//TODO: Do we just want to have some sort of general LineSolver
+				//instead of creating a new Solver for each missile?
+				MotionSolver ms1 = new LineSolver ();
+				m1.setMotionSolver(ms1);
 			}
-			
-			if (stillAlive)
+			else
 			{
-				mFriendlyMissiles.add (m1);
+				//Start off from the center base
+				m1 = new GameMissileSmart (GameMissileSmart.DEFAULT_SMART_MISSILE_EXPLOSION_RADIUS,
+														240, 320, true);
+//				GameMissile m1 = new GameMissileSmart (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
+//														xCoord, yCoord);
+				m1.setVelocity (GameMissileSmart.DEFAULT_SMART_MISSILE_VELOCITY);
+				m1.setTargetPos (new PointF (xCoord, yCoord));
+				m1.setState (GameObject.STATE_ALIVE);
+				
+				//TODO: Do we just want to have some sort of general LineSolver
+				//instead of creating a new Solver for each missile?
+				MotionSolver ms1 = new LineSolver ();
+				m1.setMotionSolver(ms1);
 			}
 			
-			mSem.release ();
-		}
-		catch (InterruptedException e)
-		{
-			System.err.println ("InterruptedException in CanvasThread MotionEventHandler: " + e.getMessage ());
+			try
+			{
+				mSem.acquire ();
+				
+				boolean stillAlive = false;
+				
+				//Make sure at least one base is still alive before launching
+				for (int i = 0; i < mBases.size (); i++)
+				{
+					GameBase base = (GameBase) mBases.get (i);
+					
+					if (base.getState () == GameObject.STATE_ALIVE)
+					{
+						stillAlive = true;
+					}
+				}
+				
+				if (stillAlive)
+				{
+					mFriendlyMissiles.add (m1);
+				}
+				
+				mSem.release ();
+			}
+			catch (InterruptedException e)
+			{
+				System.err.println ("InterruptedException in CanvasThread MotionEventHandler: " + e.getMessage ());
+			}
+			
+			Message msg = mMotionEventHandler.obtainMessage (GlobalData.FRIENDLY_MISSILE_RELOAD);
+	        msg.target = mMotionEventHandler;
+	        mMotionEventHandler.sendMessageDelayed (msg, MISSILE_RELOAD_TIME);
 		}
     }
     
@@ -139,16 +190,59 @@ public class BoomGame
     	//Determine a random X value to begin from
     	Random generator = new Random (System.currentTimeMillis ());
     	float startingX = generator.nextInt (480);
-    	float endingX = generator.nextInt (480);
-    	int missileVelocity = generator.nextInt (25) + 20;
+    	long currentTime = System.currentTimeMillis ();
+    	GameMissile m1;
+    	int gameDifficulty;
+    	long runningTime = currentTime - mGameStartTime;
+    	long runningTimeSeconds = runningTime / Physics.MILLISECONDS_PER_SECOND;
+    	int missileGenerationTime, velocityAdditive;
     	
-		GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS,
-												startingX, 0, false);
-		m1.setVelocity (missileVelocity);
-		m1.setTargetPos (new PointF (endingX, 320));
+    	if (runningTimeSeconds < 30)
+    	{
+    		gameDifficulty = GAME_DIFFICULTY_EASY;
+    		missileGenerationTime = 2000;
+    		velocityAdditive = 0;
+    	}
+    	else if (runningTimeSeconds < 60)
+    	{
+    		gameDifficulty = GAME_DIFFICULTY_MEDIUM;
+    		missileGenerationTime = 1500;
+    		velocityAdditive = 5;
+    	}
+    	else if (runningTimeSeconds < 90)
+    	{
+    		gameDifficulty = GAME_DIFFICULTY_HARD;
+    		missileGenerationTime = 1000;
+    		velocityAdditive = 10;
+    	}
+    	else
+    	{
+    		gameDifficulty =  GAME_DIFFICULTY_INSANE;
+    		missileGenerationTime = 500;
+    		velocityAdditive = 15;
+    	}
+    	
+    	//TODO: What should be the odds of a BaseKiller being generated?
+    	if (generator.nextInt (10) == 0)
+    	{
+    		m1 = new GameMissileBaseKiller (WaveExplosion.DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS,
+													startingX, 0, false);
+    		m1.setVelocity (45 + velocityAdditive);
+    		m1.setTargetPos (new PointF (240, 320));
+    	}
+    	else
+    	{
+    	    float endingX = generator.nextInt (480);
+	    	int missileVelocity = generator.nextInt (25) + 20 + velocityAdditive;
+			m1 = new GameMissileNormal (WaveExplosion.DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS,
+													startingX, 0, false);
+			m1.setVelocity (missileVelocity);
+			m1.setTargetPos (new PointF (endingX, 320));
+    	}
+
 		m1.setState (GameObject.STATE_ALIVE);
-		
-		//TODO: Do we just want to have some sort of general LineSolver
+    	
+    	//TODO: Do we just want to have some sort of general LineSolver
 		//instead of creating a new Solver for each missile?
 		MotionSolver ms1 = new LineSolver ();
 		m1.setMotionSolver(ms1);
@@ -166,7 +260,7 @@ public class BoomGame
 		
 		Message msg = mMotionEventHandler.obtainMessage (GlobalData.ENEMY_MISSILE_GENERATION);
         msg.target = mMotionEventHandler;
-        mMotionEventHandler.sendMessageDelayed (msg, 1000);
+        mMotionEventHandler.sendMessageDelayed (msg, missileGenerationTime);
     }
     
     public void updateFriendlyProjectiles (int timeElapsed)
@@ -199,17 +293,40 @@ public class BoomGame
 						//We just smacked into something
 						if (distance <= m.getProximityRadius ())
 						{
-							m.setState (GameObject.STATE_DYING);
-							
-							//Don't want to re-activate a dead object
-							if (otherMissile.getState () == GameObject.STATE_ALIVE)
+							if (otherMissile instanceof GameMissileBaseKiller)
 							{
-								otherMissile.setState (GameObject.STATE_DYING);
-								
-//								Log.i ("Missile collision:", "" + m + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
-
-								//Calculate the score for this missile
-								sendScoreUpdate (m.getScoreValue (), ScoreCalculator.PROXIMITY_MULTIPLIER_VALUE);
+								//Only Smart missiles can take out BaseKillers
+								if (m instanceof GameMissileSmart)
+								{
+									//Don't want to re-activate a dead object
+									if (otherMissile.getState () == GameObject.STATE_ALIVE)
+									{
+										m.setState (GameObject.STATE_DYING);
+										otherMissile.setState (GameObject.STATE_DYING);
+										
+										sendScoreUpdate (m.getScoreValue (),
+										 		 ScoreCalculator.PROXIMITY_MULTIPLIER_VALUE *
+										 		 	GameMissileSmart.SMART_MISSILE_SCORE_MULTIPLIER);
+									}
+								}
+								//Everything else dies
+								else
+								{
+									m.setState (GameObject.STATE_DYING);
+								}
+							}
+							else
+							{
+								//Don't want to re-activate a dead object
+								if (otherMissile.getState () == GameObject.STATE_ALIVE)
+								{
+									m.setState (GameObject.STATE_DYING);
+									otherMissile.setState (GameObject.STATE_DYING);
+									
+//									Log.i ("Missile collision:", "" + m + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
+									
+									sendScoreUpdate (m.getScoreValue (), ScoreCalculator.PROXIMITY_MULTIPLIER_VALUE);
+								}
 							}
 						}
 					}
@@ -261,38 +378,74 @@ public class BoomGame
 							//Our wave explosion hit something
 							if (coreDistance <= waveRadius)
 							{
-								//Don't want to re-activate a dead object
-								if (otherMissile.getState () == GameObject.STATE_ALIVE)
+								if (otherMissile instanceof GameMissileBaseKiller)
 								{
-									otherMissile.setState (GameObject.STATE_DYING);
-									
-									//Calculate the score for this missile
-//									Log.i ("Explosion collision:", "" + e + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
-									
-									//Calculate the score for this missile
-									int baseScore = m.getScoreValue ();
-									
-									float maxRadius = wave.getExplosionRadius ();
-									float halfMaxRadius = maxRadius / 2;
-									float multiplier = 0;
-									
-									if (waveRadius < halfMaxRadius)
+									//Only Smart missiles can take out BaseKillers
+									if (m instanceof GameMissileSmart)
 									{
-										float radiusFraction = waveRadius / halfMaxRadius;
-										float reciprocol = 1 - radiusFraction;
-										
-										multiplier = ScoreCalculator.HALF_MAX_RADIUS_MULTIPLIER_VALUE + reciprocol;
+										//Don't want to re-activate a dead object
+										if (otherMissile.getState () == GameObject.STATE_ALIVE)
+										{
+											otherMissile.setState (GameObject.STATE_DYING);
+											
+											//Calculate the score for this missile
+											float maxRadius = wave.getExplosionRadius ();
+											float halfMaxRadius = maxRadius / 2;
+											float multiplier = 0;
+											
+											if (waveRadius < halfMaxRadius)
+											{
+												float radiusFraction = waveRadius / halfMaxRadius;
+												float reciprocol = 1 - radiusFraction;
+												
+												multiplier = ScoreCalculator.HALF_MAX_RADIUS_MULTIPLIER_VALUE + reciprocol;
+											}
+											else
+											{
+												float radiusFraction = waveRadius / maxRadius;
+												float reciprocol = 1 - radiusFraction;
+												
+												multiplier = ScoreCalculator.BASE_SCORE_MULTIPLIER_VALUE + reciprocol;
+											}
+											
+											sendScoreUpdate (m.getScoreValue (),
+															 multiplier * GameMissileSmart.SMART_MISSILE_SCORE_MULTIPLIER);
+										}
 									}
-									else
-									{
-										float radiusFraction = waveRadius / maxRadius;
-										float reciprocol = 1 - radiusFraction;
-										
-										multiplier = ScoreCalculator.BASE_SCORE_MULTIPLIER_VALUE + reciprocol;
-									}
-									
-									sendScoreUpdate (baseScore, multiplier);
 								}
+								else
+								{
+									//Don't want to re-activate a dead object
+									if (otherMissile.getState () == GameObject.STATE_ALIVE)
+									{
+										otherMissile.setState (GameObject.STATE_DYING);
+										
+										//Calculate the score for this missile
+//										Log.i ("Explosion collision:", "" + e + " into " + otherMissile + " at " + mCurrentPos.x + "," + mCurrentPos.y);
+										
+										//Calculate the score for this missile
+										float maxRadius = wave.getExplosionRadius ();
+										float halfMaxRadius = maxRadius / 2;
+										float multiplier = 0;
+										
+										if (waveRadius < halfMaxRadius)
+										{
+											float radiusFraction = waveRadius / halfMaxRadius;
+											float reciprocol = 1 - radiusFraction;
+											
+											multiplier = ScoreCalculator.HALF_MAX_RADIUS_MULTIPLIER_VALUE + reciprocol;
+										}
+										else
+										{
+											float radiusFraction = waveRadius / maxRadius;
+											float reciprocol = 1 - radiusFraction;
+											
+											multiplier = ScoreCalculator.BASE_SCORE_MULTIPLIER_VALUE + reciprocol;
+										}
+										
+										sendScoreUpdate (m.getScoreValue (), multiplier);
+									}
+								} //End of if !GameMissileBaseKiller
 							}
 						}
 						
@@ -628,12 +781,7 @@ public class BoomGame
 				switch (m.getState ())
 				{
 					case GameObject.STATE_ALIVE:
-						SmokeEmitter2D smokeEmitter = m.getSmokeEmitter ();
-						
-						smokeEmitter.update(timeElapsed);
-						smokeEmitter.draw(canvas);
-	                    
-	                    m.draw(canvas, paint);
+	                    m.draw(canvas, paint, timeElapsed);
 						break;
 						
 					case GameObject.STATE_DYING:
@@ -658,12 +806,7 @@ public class BoomGame
 				switch (m.getState ())
 				{
 					case GameObject.STATE_ALIVE:
-						SmokeEmitter2D smokeEmitter = m.getSmokeEmitter ();
-						
-						smokeEmitter.update(timeElapsed);
-						smokeEmitter.draw(canvas);
-	                    
-	                    m.draw(canvas, paint);
+	                    m.draw(canvas, paint, timeElapsed);
 						break;
 						
 					case GameObject.STATE_DYING:
@@ -702,7 +845,7 @@ public class BoomGame
 				switch (base.getState ())
 				{
 					case GameObject.STATE_ALIVE:
-	                    base.draw(canvas, paint);
+	                    base.draw(canvas, paint, timeElapsed);
 						break;
 						
 					case GameObject.STATE_DYING:

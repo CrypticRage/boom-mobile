@@ -30,4 +30,5 @@ public class GlobalData {
 	public static final int MOTION_EVENT_TYPE = 1;
 	public static final int STATUS_UPDATE_EVENT_TYPE = 2;
 	public static final int ENEMY_MISSILE_GENERATION = 3;
+	public static final int FRIENDLY_MISSILE_RELOAD = 4;
 }

@@ -40,7 +40,7 @@ public class GameBase extends GameObject {
 	}
 	
 	@Override
-	public void draw(Canvas canvas, Paint paint)
+	public void draw(Canvas canvas, Paint paint, int timeElapsed)
 	{	
 		switch (mState)
 		{
