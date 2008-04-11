@@ -3,6 +3,7 @@ package com.anvil.android.boom.particles;
 import android.graphics.Canvas;
 import android.graphics.Bitmap;
 
+import com.anvil.android.boom.graphics.SpriteInstance;
 import com.anvil.android.boom.util.*;
 
 public class SmokeEmitter2D extends ParticleEmitter2D {

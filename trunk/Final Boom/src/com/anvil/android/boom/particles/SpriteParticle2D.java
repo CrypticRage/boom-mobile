@@ -1,6 +1,6 @@
 package com.anvil.android.boom.particles;
 
-import com.anvil.android.boom.particles.SpriteInstance;
+import com.anvil.android.boom.graphics.SpriteInstance;
 import android.graphics.Bitmap;
 
 public class SpriteParticle2D extends Particle2D {

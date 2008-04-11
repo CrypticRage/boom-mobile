@@ -11,8 +11,7 @@ public abstract class Particle2D {
 	public int decay = 0;
 	public int currentDecay = 0;
 
-	// protected ParticleEmitter2D emitter;
-
+	
 	public Particle2D() {
 	}
 	
