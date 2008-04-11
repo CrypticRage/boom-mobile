@@ -128,12 +128,12 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
 	public boolean onTouchEvent(MotionEvent event) {
     	if (event.getAction() == MotionEvent.ACTION_UP) {
-        	Handler handler = GlobalData.canvasThreadHandler;
+    		Handler handler = GlobalData.canvasThreadHandler;
         	PointF tempPoint = new PointF(event.getX(), event.getY());
-        	Message msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, tempPoint);
-
-            msg.target = handler;           
-            handler.sendMessage (msg);	
+		    
+        	Message	msg = handler.obtainMessage (GlobalData.MOTION_EVENT_TYPE, tempPoint);		           
+        	msg.target = handler;           
+            handler.sendMessage (msg);
     	}
         return true;
     }

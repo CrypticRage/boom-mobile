@@ -1,37 +1,21 @@
 package com.anvil.android.boom;
 
-import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.view.SurfaceHolder;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.view.SurfaceHolder;
 
-import com.anvil.android.boom.logic.Explosion;
-import com.anvil.android.boom.logic.ExplosionUpdater;
-import com.anvil.android.boom.logic.GameBase;
-import com.anvil.android.boom.logic.GameMissile;
-import com.anvil.android.boom.logic.GameMissileNormal;
-import com.anvil.android.boom.logic.GameMissileShrapnel;
-import com.anvil.android.boom.logic.GameObject;
-import com.anvil.android.boom.logic.LineSolver;
-import com.anvil.android.boom.logic.MotionSolver;
-import com.anvil.android.boom.logic.Physics;
-import com.anvil.android.boom.logic.WaveExplosion;
-import com.anvil.android.boom.logic.scoring.StatusUpdateMessage;
-import com.anvil.android.boom.logic.scoring.ScoreCalculator;
-import com.anvil.android.boom.particles.SmokeEmitter2D;
 import com.anvil.android.boom.util.StopWatch;
+import com.anvil.android.boom.graphics.Camera2D;
+import com.anvil.android.boom.graphics.CameraMotion2D;
 
-import java.util.Random;
 
 class CanvasThread extends Thread {
 
+	Handler motionEventHandler;
 	BoomGame mGame;
 	
     SurfaceHolder mHolder;
@@ -42,7 +26,11 @@ class CanvasThread extends Thread {
     private StopWatch watch;
 	private int elapsedTime;        
     
-	/* Camera Variables */
+	/* Camera */
+	private Camera2D camera;
+	private CameraMotion2D smartBombMotion;
+	
+	/* Screen Dimensions */
 	private float screenHeight = 0.0f;
 	private float screenWidth = 0.0f;
 	   
@@ -59,7 +47,30 @@ class CanvasThread extends Thread {
         
         mGame = new BoomGame ();
 		
-		screenWidth = (mHolder.getSurfaceFrame()).width();
+    	motionEventHandler = new Handler() {
+    		public void handleMessage (Message msg)
+    		{
+    			switch (msg.what)
+    			{
+    				case GlobalData.MOTION_EVENT_TYPE:
+    					PointF tempPoint = (PointF) msg.obj;
+    					
+    					mGame.createFriendlyMissile (tempPoint.x, tempPoint.y);
+    					break;
+    					
+    				case GlobalData.ENEMY_MISSILE_GENERATION:
+    					mGame.createEnemyMissile ();
+    					break;
+    					
+    				default:
+    					msg.recycle ();
+    					break;
+    			} //End of switch
+    		} //End of handleMessage
+    	};
+    	GlobalData.canvasThreadHandler = motionEventHandler; 
+   	
+        screenWidth = (mHolder.getSurfaceFrame()).width();
 		screenHeight = (mHolder.getSurfaceFrame()).height();
     }
 
