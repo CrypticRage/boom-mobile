@@ -224,7 +224,7 @@ public class BoomGame
 		Handler tempHandler = GlobalData.canvasThreadHandler;
 		Message msg = tempHandler.obtainMessage (GlobalData.ENEMY_MISSILE_GENERATION);
         msg.target = tempHandler;
-       tempHandler.sendMessageDelayed (msg, missileGenerationTime);
+        tempHandler.sendMessageDelayed (msg, missileGenerationTime);
     }
     
     public void updateFriendlyProjectiles (int timeElapsed)
@@ -842,5 +842,10 @@ public class BoomGame
 		Message msg = uiThreadHandler.obtainMessage (GlobalData.STATUS_UPDATE_EVENT_TYPE, scoreMsg);
 		msg.target = uiThreadHandler;
 		uiThreadHandler.sendMessage (msg);
+    }
+    
+    public void reloadMissile ()
+    {
+    	mMissileReloadDone = true;
     }
 } //End of BoomGame class

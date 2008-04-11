@@ -62,8 +62,12 @@ class CanvasThread extends Thread {
     					mGame.createEnemyMissile ();
     					break;
     					
+    				case GlobalData.FRIENDLY_MISSILE_RELOAD:
+    					mGame.reloadMissile ();
+    					break;
+    					
     				default:
-    					msg.recycle ();
+//    					msg.recycle ();
     					break;
     			} //End of switch
     		} //End of handleMessage
