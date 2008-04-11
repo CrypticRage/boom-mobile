@@ -47,8 +47,6 @@ public class BoomGame
 	
 	private boolean mMissileReloadDone;
 	
-	protected Handler mMotionEventHandler;
-	
 	public BoomGame ()
 	{
         //Initialize game objects
@@ -65,9 +63,7 @@ public class BoomGame
 		
 		//Create a new binary semaphore
 		mSem = new Semaphore (1, true);
-		
-        mMotionEventHandler = GlobalData.canvasThreadHandler;
-        
+		     
         mDone = false;
         
         mGameStartTime = System.currentTimeMillis ();
@@ -145,9 +141,10 @@ public class BoomGame
 				System.err.println ("InterruptedException in CanvasThread MotionEventHandler: " + e.getMessage ());
 			}
 			
-			Message msg = mMotionEventHandler.obtainMessage (GlobalData.FRIENDLY_MISSILE_RELOAD);
-	        msg.target = mMotionEventHandler;
-	        mMotionEventHandler.sendMessageDelayed (msg, MISSILE_RELOAD_TIME);
+			Handler tempHandler = GlobalData.canvasThreadHandler;
+			Message msg = tempHandler.obtainMessage (GlobalData.FRIENDLY_MISSILE_RELOAD);
+	        msg.target = tempHandler;
+	        tempHandler.sendMessageDelayed (msg, MISSILE_RELOAD_TIME);
 		}
     }
     
@@ -224,9 +221,10 @@ public class BoomGame
 			System.err.println ("InterruptedException in CanvasThread createEnemyMissile: " + e.getMessage ());
 		}
 		
-		Message msg = mMotionEventHandler.obtainMessage (GlobalData.ENEMY_MISSILE_GENERATION);
-        msg.target = mMotionEventHandler;
-        mMotionEventHandler.sendMessageDelayed (msg, missileGenerationTime);
+		Handler tempHandler = GlobalData.canvasThreadHandler;
+		Message msg = tempHandler.obtainMessage (GlobalData.ENEMY_MISSILE_GENERATION);
+        msg.target = tempHandler;
+       tempHandler.sendMessageDelayed (msg, missileGenerationTime);
     }
     
     public void updateFriendlyProjectiles (int timeElapsed)
