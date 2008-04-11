@@ -1,6 +1,7 @@
 package com.anvil.android.boom;
 
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.Rect;
 import android.os.Handler;
 
@@ -19,10 +20,7 @@ public class GlobalData {
 	public static volatile Handler uiThreadHandler;
 	public static volatile Handler canvasThreadHandler;
 	
-	public static final int ZOOMING = 0;
-	public static final int MIN_ZOOM = 1;
-	public static final int MAX_ZOOM = 1;
-	public static volatile int gameState = MIN_ZOOM;
+	public static volatile Typeface textFont;
 	
 	public static volatile int gameScore = 0; 
 	public static volatile String bottomStatusText;
@@ -31,4 +29,9 @@ public class GlobalData {
 	public static final int STATUS_UPDATE_EVENT_TYPE = 2;
 	public static final int ENEMY_MISSILE_GENERATION = 3;
 	public static final int FRIENDLY_MISSILE_RELOAD = 4;
+		
+	public static final int STANDARD_MISSILE = 0;
+	public static final int SMART_BOMB = 1;	
+	public static volatile int AMMO_TYPE = STANDARD_MISSILE;
+
 }
