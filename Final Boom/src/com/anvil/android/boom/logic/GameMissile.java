@@ -2,7 +2,7 @@ package com.anvil.android.boom.logic;
 
 import com.anvil.android.boom.GlobalData;
 import com.anvil.android.boom.particles.SmokeEmitter2D;
-import com.anvil.android.boom.particles.SpriteInstance;
+import com.anvil.android.boom.graphics.SpriteInstance;
 
 import android.graphics.Canvas;
 import android.graphics.RectF;
@@ -65,7 +65,6 @@ public abstract class GameMissile extends GameObject {
 		
 		mPointsAward = DEFAULT_SCORE_VALUE;
 	}
-
 	
 	@Override
 	//TODO: Replace with real drawing code

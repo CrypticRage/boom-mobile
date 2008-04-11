@@ -5,7 +5,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import java.util.ArrayList;
 
-import com.anvil.android.boom.particles.SpriteInstance;
+import com.anvil.android.boom.graphics.SpriteInstance;
 
 public abstract class GameObject {
 	// Game object states are done using a constant rather than an Enum.
@@ -78,7 +78,7 @@ public abstract class GameObject {
 		calcInitVelocity();
 	}
 
-	private void calcDrawAngle() {
+	protected void calcDrawAngle() {
 		float hyp = Physics.calculateDistance(mStartingPos, mTargetPos);
 		float opp = mStartingPos.y - mTargetPos.y;
 		double tempAngle = Math.asin(opp/hyp);
