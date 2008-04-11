@@ -26,7 +26,6 @@ import com.anvil.android.boom.logic.Physics;
 import com.anvil.android.boom.logic.WaveExplosion;
 import com.anvil.android.boom.logic.scoring.ScoreCalculator;
 import com.anvil.android.boom.logic.scoring.StatusUpdateMessage;
-import com.anvil.android.boom.particles.SmokeEmitter2D;
 
 public class BoomGame
 {	
@@ -48,39 +47,7 @@ public class BoomGame
 	
 	private boolean mMissileReloadDone;
 	
-	protected MotionEventHandler mMotionEventHandler;
-	
-	private class MotionEventHandler extends Handler
-	{
-		public MotionEventHandler ()
-		{
-			super ();
-		}
-		
-		public void handleMessage (Message msg)
-		{
-			switch (msg.what)
-			{
-				case GlobalData.MOTION_EVENT_TYPE:
-					PointF tempPoint = (PointF) msg.obj;
-					
-					createFriendlyMissile (tempPoint.x, tempPoint.y);
-					break;
-					
-				case GlobalData.ENEMY_MISSILE_GENERATION:
-					createEnemyMissile ();
-					break;
-					
-				case GlobalData.FRIENDLY_MISSILE_RELOAD:
-					mMissileReloadDone = true;
-					break;
-					
-				default:
-					msg.recycle ();
-					break;
-			} //End of switch
-		} //End of handleMessage
-	} //End of MotionEventHandler class
+	protected Handler mMotionEventHandler;
 	
 	public BoomGame ()
 	{
@@ -99,8 +66,7 @@ public class BoomGame
 		//Create a new binary semaphore
 		mSem = new Semaphore (1, true);
 		
-        mMotionEventHandler = new MotionEventHandler ();
-        GlobalData.canvasThreadHandler = mMotionEventHandler;
+        mMotionEventHandler = GlobalData.canvasThreadHandler;
         
         mDone = false;
         
