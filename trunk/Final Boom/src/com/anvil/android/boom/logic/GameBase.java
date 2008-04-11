@@ -1,7 +1,7 @@
 package com.anvil.android.boom.logic;
 
 import com.anvil.android.boom.GlobalData;
-import com.anvil.android.boom.particles.SpriteInstance;
+import com.anvil.android.boom.graphics.SpriteInstance;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
