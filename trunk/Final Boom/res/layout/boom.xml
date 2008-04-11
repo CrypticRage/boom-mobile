@@ -1,25 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
         
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent"
-            android:layout_height="0px"
-            android:layout_weight="1">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
 
-	<com.anvil.android.boom.BoomView android:id="@+id/maincanvas"
+	<com.anvil.android.boom.BoomView android:id="@+id/main_canvas"
     	android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
-                
-	<TextView android:id="@+id/fpsmeter"
-      	android:layout_width="fill_parent" android:layout_height="wrap_content"
-       	android:textAlign="center"
-       	android:textColor="#ffffffff"
-       	android:text="FPS Meter"
-       	/>
-       		                           	       
-</FrameLayout>
+                      		                           	       
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:orientation="horizontal"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_alignParentTop="true">
+    
+		<!-- top left -->
+    	<TextView android:id="@+id/top_left"
+       		android:textAlign="start"
+       		android:textColor="#ff008cb4"
+        	android:layout_width="0dip"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1"
+        	android:text="Top Left"/>
 
-</LinearLayout>
+		<!-- top middle -->
+		<TextView android:id="@+id/top_middle"
+       		android:textAlign="center"
+       		android:textColor="#ffff0000"
+        	android:layout_width="0dip"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1"
+        	android:text="Top Middle"/>
+		
+		<!-- top right -->
+		<TextView android:id="@+id/top_right"
+       		android:textAlign="end"
+       		android:textColor="#ff008cb4"
+        	android:layout_width="0dip"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1"
+        	android:text="Top Right"/>
+
+	</LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:orientation="horizontal"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_alignParentBottom="true">
+    
+		<ImageButton android:id="@+id/button1"
+			android:layout_width="50px"
+			android:layout_height="50px"
+			android:src="@drawable/std_missile_icon" />
+    	
+		<ImageButton android:id="@+id/button2"
+			android:layout_width="50px"
+			android:layout_height="50px"
+			android:src="@drawable/smart_bomb_icon" />
+
+	</LinearLayout>
+
+
+</RelativeLayout>
+
