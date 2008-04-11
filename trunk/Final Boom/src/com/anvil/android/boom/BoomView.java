@@ -53,7 +53,7 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
 					break;
 
 				default:
-					msg.recycle ();
+//					msg.recycle ();
 					break;
 			} //End of switch statement
 		}
