@@ -4,7 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
-//import com.anvil.android.util.*;
 
 public class BlastEmitter2D extends ParticleEmitter2D {
 	public int status;

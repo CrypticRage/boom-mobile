@@ -15,7 +15,7 @@ public abstract class ParticleEmitter2D {
 	
 	public float x = 0.0f;
 	public float y = 0.0f;
-	public int angle = 0;	
+	public float angle = 0;	
 
 	public int lifetime = 0;
 	public int age = 0;
