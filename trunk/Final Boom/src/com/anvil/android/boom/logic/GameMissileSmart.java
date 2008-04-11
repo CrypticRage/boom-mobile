@@ -1,33 +1,32 @@
 package com.anvil.android.boom.logic;
 
-import com.anvil.android.boom.GlobalData;
-import com.anvil.android.boom.particles.SmokeEmitter2D;
-
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
 
 
-public class GameMissileNormal extends GameMissile {
+public class GameMissileSmart extends GameMissileNormal {
 	
-	public static final int DEFAULT_NORMAL_MISSILE_DAMAGE = 100;
+	public static final int DEFAULT_SMART_MISSILE_DAMAGE = 100;
 	
-	public GameMissileNormal()
+	public static final int DEFAULT_SMART_MISSILE_VELOCITY = 200;
+	public static final float DEFAULT_SMART_MISSILE_EXPLOSION_RADIUS = 45;
+	
+	public static final int SMART_MISSILE_SCORE_MULTIPLIER = 2;
+	
+	public GameMissileSmart()
 	{
 		super ();
 		
-		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
+		mExplosionDamage = DEFAULT_SMART_MISSILE_DAMAGE;
 	}
 	
-	public GameMissileNormal (float explosionRadius, float startingX, float startingY, boolean friendly)
+	public GameMissileSmart (float explosionRadius, float startingX, float startingY, boolean friendly)
 	{
 		super (explosionRadius, startingX, startingY, friendly);
 		
-		//TODO: Need to change so we're not accessing a specific index in the sprite array
-		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES, startingX, startingY, GlobalData.sprites[0]);
-		
-		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
+		mExplosionDamage = DEFAULT_SMART_MISSILE_DAMAGE;
 	}
 	
 	@Override
@@ -41,7 +40,6 @@ public class GameMissileNormal extends GameMissile {
 		mExplosionUpdater = new WaveExplosionUpdater ();
 	}
 	
-	@Override
 	public void draw (Canvas canvas, Paint paint, int timeElapsed)
 	{
 		switch (this.getState ())
@@ -55,9 +53,6 @@ public class GameMissileNormal extends GameMissile {
 				canvas.rotate(drawAngle);				
 		    	canvas.drawBitmap(mSprite.sprite, null, tempBox, paint);
 				canvas.restore();
-				
-				mSmokeEmitter.update (timeElapsed);
-				mSmokeEmitter.draw (canvas);
 			}
 			break;
 			
@@ -71,4 +66,4 @@ public class GameMissileNormal extends GameMissile {
 				break;
 		}
 	}
-} //End of class GameMissileNormal
+} //End of class GameMissileSmart

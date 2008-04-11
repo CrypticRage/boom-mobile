@@ -33,7 +33,7 @@ public class GameMissileShrapnel extends GameMissile {
 	}
 	
 	@Override
-	public void draw (Canvas canvas, Paint paint)
+	public void draw (Canvas canvas, Paint paint, int timeElapsed)
 	{
 		switch (this.getState ())
 		{

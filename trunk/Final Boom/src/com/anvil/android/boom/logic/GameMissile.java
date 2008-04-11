@@ -14,7 +14,7 @@ public abstract class GameMissile extends GameObject {
 	
 	public static final int DEFAULT_NUM_SMOKE_PARTICLES = 30;
 	public static final float DEFAULT_PROXIMITY_RADIUS = 5;
-	public static final float DEFAULT_FRIENDLY_MISSILE_VELOCITY = 50;
+	public static final float DEFAULT_FRIENDLY_MISSILE_VELOCITY = 75;
 	
 	public static final int DEFAULT_SCORE_VALUE = 100;
 	
@@ -61,9 +61,6 @@ public abstract class GameMissile extends GameObject {
 		mSprite.setScale(0.20f);
 		mSprite.setRadius (12);
 		
-		//TODO: Need to change so we're not accessing a specific index in the sprite array
-		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES, startingX, startingY, GlobalData.sprites[0]);
-		
 		mExplosion = null;
 		
 		mPointsAward = DEFAULT_SCORE_VALUE;
@@ -72,32 +69,7 @@ public abstract class GameMissile extends GameObject {
 	
 	@Override
 	//TODO: Replace with real drawing code
-	public void draw (Canvas canvas, Paint paint)
-	{
-		switch (this.getState ())
-		{
-			case GameObject.STATE_ALIVE:
-			{
-				RectF tempBox = mSprite.getDrawBox();
-				
-				canvas.save();
-				canvas.translate(mCurrentPos.x, mCurrentPos.y);
-				canvas.rotate(drawAngle);				
-		    	canvas.drawBitmap(mSprite.sprite, null, tempBox, paint);
-				canvas.restore();
-			}
-			break;
-			
-			case GameObject.STATE_DYING:
-				break;
-			
-			case GameObject.STATE_DEAD:
-				break;
-				
-			default:
-				break;
-		}
-	}
+	public abstract void draw (Canvas canvas, Paint paint, int timeElapsed);
 	
 	public float getProximityRadius ()
 	{
