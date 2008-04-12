@@ -78,8 +78,7 @@ public class BoomGame
 		{
 			mMissileReloadDone = false;
 			
-			//TODO: Check global munitions type
-			if (true)
+			if (GlobalData.AMMO_TYPE == GlobalData.STANDARD_MISSILE)
 			{
 				//Start off from the center base
 				m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
@@ -95,6 +94,7 @@ public class BoomGame
 				MotionSolver ms1 = new LineSolver ();
 				m1.setMotionSolver(ms1);
 			}
+			//Else it's a smart bomb
 			else
 			{
 				//Start off from the center base
@@ -556,6 +556,7 @@ public class BoomGame
 							WaveExplosion wave = (WaveExplosion) e;
 							float previousRadius = wave.getPreviousRadius ();
 							float currentRadius = wave.getCurrentRadius ();
+							
 
 							//Subtract the base radius
 							coreDistance -= baseRadius;
@@ -569,10 +570,33 @@ public class BoomGame
 									int baseHP = base.getHitPoints ();
 									int missileDamage = m.getExplosionDamage ();
 									
-									Log.i ("updateEnemyProjectiles: ", "Base took damage");
-									
-									baseHP -= missileDamage;
-									base.setHitPoints (baseHP);
+									//A BaseKiller always deals max damage
+									if (m instanceof GameMissileBaseKiller)
+									{
+										baseHP -= missileDamage;
+										base.setHitPoints (baseHP);
+									}
+									else
+									{
+										//If the missile hit close enough, it deals max damage
+										if (currentRadius < WaveExplosion.ENEMY_MAX_DAMAGE_RADIUS)
+										{
+											baseHP -= missileDamage;
+											base.setHitPoints (baseHP);
+											Log.i ("updateEnemyProjectiles: ", "Base took damage, HP: " + baseHP);
+										}
+										//Else deal a percentage of the max damage
+										else
+										{
+											float maxRadius = wave.getExplosionRadius ();
+											float radiusPercentage = currentRadius / maxRadius;
+											float reciprocol = 1 - radiusPercentage;
+											
+											baseHP -= (missileDamage * reciprocol);
+											base.setHitPoints (baseHP);
+											Log.i ("updateEnemyProjectiles: ", "Base took damage, HP: " + baseHP);
+										}
+									}
 									
 									//If the base just died
 									if (baseHP <= 0)
@@ -581,7 +605,7 @@ public class BoomGame
 										base.setState (GameObject.STATE_DYING);
 									}
 								}
-							}
+							} //End of radius check
 						}
 						
 						//TODO: Add code for shrapnel type explosion

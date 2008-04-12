@@ -16,6 +16,8 @@ public class WaveExplosion extends Explosion {
 	public static final float DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS = 30;
 	public static final float DEFAULT_ENEMY_INTERCEPTED_WAVE_EXPLOSION_RADIUS = 10;
 
+	public static final float ENEMY_MAX_DAMAGE_RADIUS = 10; //If a base gets hit within this radius, it takes max damage
+	
 	protected float mCurrentRadius;
 	protected float mPreviousRadius;
 	
