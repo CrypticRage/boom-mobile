@@ -139,6 +139,12 @@ public class BoomActivity extends Activity {
     			R.drawable.dome_base);
     	SpriteData.sprites[SpriteData.RED_CROSS] = BitmapFactory.decodeResource(getResources(),
     			R.drawable.red_cross);
+
+    	SpriteData.bgSprites = new Bitmap[SpriteData.bgSpriteCount];
+    	SpriteData.bgSprites[SpriteData.BG_GROUND] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.ground);
+    	SpriteData.bgSprites[SpriteData.BG_MOUNTAINS] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.mountains);
     }
   
     private void loadFonts() {
