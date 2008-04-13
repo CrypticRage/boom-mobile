@@ -26,6 +26,8 @@ public abstract class GameMissile extends GameObject {
 									//this radius, trigger explosion
 	
 	protected SmokeEmitter2D mSmokeEmitter;
+	protected PointF smokeOffset = new PointF(0.0f, 0.0f);
+	//protected PointF smokeOffset;
 	
 	// TODO find some list type to use.
 	// TODO if a MIRV exists as children in a container, how do the child missiles get
@@ -74,9 +76,11 @@ public abstract class GameMissile extends GameObject {
 	public void setCurrentPos(PointF currentPos)
 	{
 		mCurrentPos = currentPos;
-		
-		mSmokeEmitter.x = currentPos.x;
-		mSmokeEmitter.y = currentPos.y;
+
+		//mSmokeEmitter.x = currentPos.x;
+		//mSmokeEmitter.y = currentPos.y;
+		mSmokeEmitter.x = currentPos.x + smokeOffset.x;
+		mSmokeEmitter.y = currentPos.y + smokeOffset.y;
 	}
 	
 	public SmokeEmitter2D getSmokeEmitter ()
