@@ -41,30 +41,51 @@ public class Physics {
 	public static boolean checkCrossing (PointF startingPos, PointF targetPos, PointF nextPos) {
 		boolean targetReached = false;
 		
+		// Check for off-axis crossings
 		if (startingPos.x > targetPos.x && startingPos.y < targetPos.y) {
 			if (nextPos.x <= targetPos.x && nextPos.y >= targetPos.y) {
 				targetReached = true;
 			}
-		}
-		
+		}		
 		if (startingPos.x < targetPos.x && startingPos.y > targetPos.y) {
 			if (nextPos.x >= targetPos.x && nextPos.y <= targetPos.y) {
 				targetReached = true;
 			}
 		}
-
 		if (startingPos.x > targetPos.x && startingPos.y > targetPos.y) {
 			if (nextPos.x <= targetPos.x && nextPos.y <= targetPos.y) {
 				targetReached = true;
 			}
-		}
-		
+		}		
 		if (startingPos.x < targetPos.x && startingPos.y < targetPos.y) {
 			if (nextPos.x >= targetPos.x && nextPos.y >= targetPos.y) {
 				targetReached = true;
 			}
 		}
 		
+		// Check for on-axis crossings
+		if (startingPos.x > targetPos.x && startingPos.y == targetPos.y) {
+			if (nextPos.x <= targetPos.x) {
+				targetReached = true;
+			}
+		}		
+		if (startingPos.x < targetPos.x && startingPos.y == targetPos.y) {
+			if (nextPos.x >= targetPos.x) {
+				targetReached = true;
+			}
+		}
+		if (startingPos.x == targetPos.x && startingPos.y > targetPos.y) {
+			if (nextPos.y <= targetPos.x) {
+				targetReached = true;
+			}
+		}
+		if (startingPos.x == targetPos.x && startingPos.y < targetPos.y) {
+			if (nextPos.y >= targetPos.x) {
+				targetReached = true;
+			}
+		}
+		
+		// Check for rare case where starting point is equal to ending point
 		if (startingPos.x == targetPos.x && startingPos.y == targetPos.y) {
 			targetReached = true;
 		}				

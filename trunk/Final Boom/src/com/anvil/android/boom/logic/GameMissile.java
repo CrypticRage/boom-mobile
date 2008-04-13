@@ -3,6 +3,7 @@ package com.anvil.android.boom.logic;
 import com.anvil.android.boom.GlobalData;
 import com.anvil.android.boom.particles.SmokeEmitter2D;
 import com.anvil.android.boom.graphics.SpriteInstance;
+import com.anvil.android.boom.graphics.SpriteData;
 
 import android.graphics.Canvas;
 import android.graphics.RectF;
@@ -51,11 +52,11 @@ public abstract class GameMissile extends GameObject {
 		
 		if (friendly)
 		{
-			mSprite = new SpriteInstance(GlobalData.sprites[1]);
+			mSprite = new SpriteInstance(SpriteData.sprites[SpriteData.STD_MISSILE]);
 		}
 		else
 		{
-			mSprite = new SpriteInstance(GlobalData.sprites[4]);
+			mSprite = new SpriteInstance(SpriteData.sprites[SpriteData.STD_MISSILE]);
 		}
 		
 		mSprite.setScale(0.20f);

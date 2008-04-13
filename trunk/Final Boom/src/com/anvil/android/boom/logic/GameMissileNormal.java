@@ -1,13 +1,11 @@
 package com.anvil.android.boom.logic;
 
-import com.anvil.android.boom.GlobalData;
+import com.anvil.android.boom.graphics.SpriteData;
 import com.anvil.android.boom.particles.SmokeEmitter2D;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-
-
 
 public class GameMissileNormal extends GameMissile {
 	
@@ -25,7 +23,8 @@ public class GameMissileNormal extends GameMissile {
 		super (explosionRadius, startingX, startingY, friendly);
 		
 		//TODO: Need to change so we're not accessing a specific index in the sprite array
-		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES, startingX, startingY, GlobalData.sprites[0]);
+		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES,
+				startingX, startingY, SpriteData.sprites[SpriteData.SMOKE_CLOUD]);
 		
 		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
 	}

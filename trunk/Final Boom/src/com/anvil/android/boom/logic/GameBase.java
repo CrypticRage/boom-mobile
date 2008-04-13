@@ -2,6 +2,7 @@ package com.anvil.android.boom.logic;
 
 import com.anvil.android.boom.GlobalData;
 import com.anvil.android.boom.graphics.SpriteInstance;
+import com.anvil.android.boom.graphics.SpriteData;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -26,7 +27,7 @@ public class GameBase extends GameObject {
 		mCurrentPos = new PointF (startingX, startingY);
 		mStartingPos = new PointF (startingX, startingY);
 		
-		mSprite = new SpriteInstance(GlobalData.sprites[3]);
+		mSprite = new SpriteInstance(SpriteData.sprites[SpriteData.DOME_BASE]);
 		mSprite.setRadius(radius);
 		
 		mHitPoints = numHitPoints;
