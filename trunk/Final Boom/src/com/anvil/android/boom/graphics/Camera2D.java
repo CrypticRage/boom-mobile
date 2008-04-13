@@ -73,13 +73,8 @@ public class Camera2D extends Camera {
 		float cy = view.centerY();
 		float distance = 0.0f;
 		
-		if (cameraHeight > z) {
-			distance = cameraHeight - z;
-		}
-		else if (z > cameraHeight) {
-			distance = z - cameraHeight;
-		}
-		
+		distance = cameraHeight - z;
+	
 		//Log.i("Camera", "X: " + cx + " Y:" + cy);
 		cameraHeight = z;
 		y = tanTheta*cameraHeight;
