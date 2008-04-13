@@ -78,6 +78,7 @@ public class BoomGame
 		{
 			mMissileReloadDone = false;
 			
+			//TODO: Check global munitions type
 			if (GlobalData.AMMO_TYPE == GlobalData.STANDARD_MISSILE)
 			{
 				//Start off from the center base

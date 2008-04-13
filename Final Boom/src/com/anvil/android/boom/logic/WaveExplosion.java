@@ -1,10 +1,8 @@
 package com.anvil.android.boom.logic;
 
 import android.graphics.Canvas;
-import com.anvil.android.boom.GlobalData;
+import com.anvil.android.boom.graphics.SpriteData;
 import com.anvil.android.boom.particles.BlastEmitter2D;
-
-
 
 public class WaveExplosion extends Explosion {
 	
@@ -46,7 +44,7 @@ public class WaveExplosion extends Explosion {
 											y,
 											velocity,
 											radius,
-											GlobalData.sprites[2]
+											SpriteData.sprites[SpriteData.SMOKE_CLOUD]
 		);
 	}
 	
