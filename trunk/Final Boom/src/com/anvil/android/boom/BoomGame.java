@@ -31,6 +31,7 @@ public class BoomGame
 {	
 	private static final int SMART_MISSILE_RELOAD_TIME = 500;
 	private static final int NORMAL_MISSILE_RELOAD_TIME = 250;
+	private static final int BASE_KILLER_SPAWN_CAP_TIME = 1000;
 	
 	private static final int GAME_DIFFICULTY_EASY = 1;
 	private static final int GAME_DIFFICULTY_MEDIUM = 2;
@@ -47,6 +48,7 @@ public class BoomGame
 	public boolean mDone;
 	
 	private boolean mMissileReloadDone;
+	private boolean mBaseKillerReloadDone;
 	
 	public BoomGame ()
 	{
@@ -69,6 +71,7 @@ public class BoomGame
         
         mGameStartTime = System.currentTimeMillis ();
         mMissileReloadDone = true;
+        mBaseKillerReloadDone = true;
 	}
 	
 	public void createFriendlyMissile (float xCoord, float yCoord)
@@ -197,8 +200,15 @@ public class BoomGame
     	}
     	
     	//TODO: What should be the odds of a BaseKiller being generated?
-    	if (generator.nextInt (10) == 0)
+    	if (generator.nextInt (10) == 0 && mBaseKillerReloadDone)
     	{
+    		mBaseKillerReloadDone = false;
+    		
+    		Handler tempHandler = GlobalData.canvasThreadHandler;
+    		Message msg = tempHandler.obtainMessage (GlobalData.BASE_KILLER_RESPAWN);
+            msg.target = tempHandler;
+            tempHandler.sendMessageDelayed (msg, BASE_KILLER_SPAWN_CAP_TIME);
+    		
     		m1 = new GameMissileBaseKiller (WaveExplosion.DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS,
 													startingX, -100, 240, 320);
     		m1.setVelocity (45 + velocityAdditive);
@@ -880,5 +890,10 @@ public class BoomGame
     public void reloadMissile ()
     {
     	mMissileReloadDone = true;
+    }
+    
+    public void reloadBaseKiller ()
+    {
+    	mBaseKillerReloadDone = true;
     }
 } //End of BoomGame class

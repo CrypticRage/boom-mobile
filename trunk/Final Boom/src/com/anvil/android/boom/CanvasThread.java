@@ -114,6 +114,9 @@ class CanvasThread extends Thread {
     					mGame.reloadMissile ();
     					break;
     					
+    				case GlobalData.BASE_KILLER_RESPAWN:
+    					mGame.reloadBaseKiller ();
+    					
     				default:
 //    					msg.recycle ();
     					break;
