@@ -1,6 +1,7 @@
 package com.anvil.android.boom.logic;
 
 import com.anvil.android.boom.graphics.SpriteData;
+import com.anvil.android.boom.graphics.SpriteInstance;
 import com.anvil.android.boom.particles.SmokeEmitter2D;
 
 import android.graphics.Canvas;
@@ -18,15 +19,38 @@ public class GameMissileNormal extends GameMissile {
 		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
 	}
 	
-	public GameMissileNormal (float explosionRadius, float startingX, float startingY, boolean friendly, float endingX, float endingY)
+	public GameMissileNormal (float explosionRadius, float startingX, float startingY, float endingX, float endingY)
 	{
-		super (explosionRadius, startingX, startingY, friendly, endingX, endingY);
+		super (explosionRadius, startingX, startingY, endingX, endingY);
 		
 		//TODO: Need to change so we're not accessing a specific index in the sprite array
 		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES,
 				startingX, startingY, SpriteData.sprites[SpriteData.SMOKE_CLOUD]);
 		
 		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
+	}
+	
+	public GameMissileNormal (float explosionRadius, float startingX, float startingY, float endingX, float endingY, boolean friendly)
+	{
+		super (explosionRadius, startingX, startingY, endingX, endingY);
+		
+		//TODO: Need to change so we're not accessing a specific index in the sprite array
+		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES,
+				startingX, startingY, SpriteData.sprites[SpriteData.SMOKE_CLOUD]);
+		
+		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
+		
+		if (friendly)
+		{
+			mSprite = new SpriteInstance(SpriteData.sprites[SpriteData.STD_MISSILE]);
+		}
+		else
+		{
+			mSprite = new SpriteInstance(SpriteData.sprites[SpriteData.STD_MISSILE]);
+		}
+		
+		mSprite.setScale(0.20f);
+		mSprite.setRadius (12);
 	}
 	
 	@Override

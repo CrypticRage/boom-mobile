@@ -29,7 +29,8 @@ import com.anvil.android.boom.logic.scoring.StatusUpdateMessage;
 
 public class BoomGame
 {	
-	public static final int MISSILE_RELOAD_TIME = 500;
+	private static final int SMART_MISSILE_RELOAD_TIME = 500;
+	private static final int NORMAL_MISSILE_RELOAD_TIME = 250;
 	
 	private static final int GAME_DIFFICULTY_EASY = 1;
 	private static final int GAME_DIFFICULTY_MEDIUM = 2;
@@ -73,6 +74,7 @@ public class BoomGame
 	public void createFriendlyMissile (float xCoord, float yCoord)
     {
 		GameMissile m1;
+		boolean firedStandard = true;
 		
 		if (mMissileReloadDone)
 		{
@@ -83,7 +85,7 @@ public class BoomGame
 			{
 				//Start off from the center base
 				m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
-														240, 320, true, xCoord, yCoord);
+														240, 320, xCoord, yCoord, true);
 //				GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
 //														xCoord, yCoord);
 				m1.setVelocity (GameMissile.DEFAULT_FRIENDLY_MISSILE_VELOCITY);
@@ -99,7 +101,7 @@ public class BoomGame
 			{
 				//Start off from the center base
 				m1 = new GameMissileSmart (GameMissileSmart.DEFAULT_SMART_MISSILE_EXPLOSION_RADIUS,
-														240, 320, true, xCoord, yCoord);
+														240, 320, xCoord, yCoord);
 //				GameMissile m1 = new GameMissileSmart (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
 //														xCoord, yCoord);
 				m1.setVelocity (GameMissileSmart.DEFAULT_SMART_MISSILE_VELOCITY);
@@ -109,6 +111,8 @@ public class BoomGame
 				//instead of creating a new Solver for each missile?
 				MotionSolver ms1 = new LineSolver ();
 				m1.setMotionSolver(ms1);
+				
+				firedStandard = false;
 			}
 			
 			try
@@ -143,7 +147,15 @@ public class BoomGame
 			Handler tempHandler = GlobalData.canvasThreadHandler;
 			Message msg = tempHandler.obtainMessage (GlobalData.FRIENDLY_MISSILE_RELOAD);
 	        msg.target = tempHandler;
-	        tempHandler.sendMessageDelayed (msg, MISSILE_RELOAD_TIME);
+	        
+	        if (firedStandard)
+	        {
+	        	tempHandler.sendMessageDelayed (msg, NORMAL_MISSILE_RELOAD_TIME);
+	        }
+	        else
+	        {
+	        	tempHandler.sendMessageDelayed (msg, SMART_MISSILE_RELOAD_TIME);
+	        }
 		}
     }
     
@@ -188,7 +200,7 @@ public class BoomGame
     	if (generator.nextInt (10) == 0)
     	{
     		m1 = new GameMissileBaseKiller (WaveExplosion.DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS,
-													startingX, 0, false, 240, 320);
+													startingX, -100, 240, 320);
     		m1.setVelocity (45 + velocityAdditive);
     	}
     	else
@@ -196,7 +208,7 @@ public class BoomGame
     	    float endingX = generator.nextInt (480);
 	    	int missileVelocity = generator.nextInt (25) + 20 + velocityAdditive;
 			m1 = new GameMissileNormal (WaveExplosion.DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS,
-													startingX, 0, false, endingX, 320);
+													startingX, -100, endingX, 320, false);
 			m1.setVelocity (missileVelocity);
     	}
 
