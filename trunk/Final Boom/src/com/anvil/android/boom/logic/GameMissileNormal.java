@@ -18,9 +18,9 @@ public class GameMissileNormal extends GameMissile {
 		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
 	}
 	
-	public GameMissileNormal (float explosionRadius, float startingX, float startingY, boolean friendly)
+	public GameMissileNormal (float explosionRadius, float startingX, float startingY, boolean friendly, float endingX, float endingY)
 	{
-		super (explosionRadius, startingX, startingY, friendly);
+		super (explosionRadius, startingX, startingY, friendly, endingX, endingY);
 		
 		//TODO: Need to change so we're not accessing a specific index in the sprite array
 		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES,

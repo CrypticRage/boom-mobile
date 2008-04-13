@@ -83,11 +83,10 @@ public class BoomGame
 			{
 				//Start off from the center base
 				m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
-														240, 320, true);
+														240, 320, true, xCoord, yCoord);
 //				GameMissile m1 = new GameMissileNormal (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
 //														xCoord, yCoord);
 				m1.setVelocity (GameMissile.DEFAULT_FRIENDLY_MISSILE_VELOCITY);
-				m1.setTargetPos (new PointF (xCoord, yCoord));
 				m1.setState (GameObject.STATE_ALIVE);
 				
 				//TODO: Do we just want to have some sort of general LineSolver
@@ -100,11 +99,10 @@ public class BoomGame
 			{
 				//Start off from the center base
 				m1 = new GameMissileSmart (GameMissileSmart.DEFAULT_SMART_MISSILE_EXPLOSION_RADIUS,
-														240, 320, true);
+														240, 320, true, xCoord, yCoord);
 //				GameMissile m1 = new GameMissileSmart (WaveExplosion.DEFAULT_FRIENDLY_WAVE_EXPLOSION_RADIUS,
 //														xCoord, yCoord);
 				m1.setVelocity (GameMissileSmart.DEFAULT_SMART_MISSILE_VELOCITY);
-				m1.setTargetPos (new PointF (xCoord, yCoord));
 				m1.setState (GameObject.STATE_ALIVE);
 				
 				//TODO: Do we just want to have some sort of general LineSolver
@@ -190,18 +188,16 @@ public class BoomGame
     	if (generator.nextInt (10) == 0)
     	{
     		m1 = new GameMissileBaseKiller (WaveExplosion.DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS,
-													startingX, 0, false);
+													startingX, 0, false, 240, 320);
     		m1.setVelocity (45 + velocityAdditive);
-    		m1.setTargetPos (new PointF (240, 320));
     	}
     	else
     	{
     	    float endingX = generator.nextInt (480);
 	    	int missileVelocity = generator.nextInt (25) + 20 + velocityAdditive;
 			m1 = new GameMissileNormal (WaveExplosion.DEFAULT_ENEMY_PAYLOAD_WAVE_EXPLOSION_RADIUS,
-													startingX, 0, false);
+													startingX, 0, false, endingX, 320);
 			m1.setVelocity (missileVelocity);
-			m1.setTargetPos (new PointF (endingX, 320));
     	}
 
 		m1.setState (GameObject.STATE_ALIVE);

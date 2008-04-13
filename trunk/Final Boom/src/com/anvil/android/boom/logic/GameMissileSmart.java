@@ -22,9 +22,9 @@ public class GameMissileSmart extends GameMissileNormal {
 		mExplosionDamage = DEFAULT_SMART_MISSILE_DAMAGE;
 	}
 	
-	public GameMissileSmart (float explosionRadius, float startingX, float startingY, boolean friendly)
+	public GameMissileSmart (float explosionRadius, float startingX, float startingY, boolean friendly, float endingX, float endingY)
 	{
-		super (explosionRadius, startingX, startingY, friendly);
+		super (explosionRadius, startingX, startingY, friendly, endingX, endingY);
 		
 		mExplosionDamage = DEFAULT_SMART_MISSILE_DAMAGE;
 	}
