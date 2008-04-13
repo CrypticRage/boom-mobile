@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.view.SurfaceHolder;
@@ -12,7 +13,7 @@ import com.anvil.android.boom.GlobalData;
 import com.anvil.android.boom.util.StopWatch;
 import com.anvil.android.boom.graphics.Camera2D;
 import com.anvil.android.boom.graphics.CameraMotion2D;
-
+import com.anvil.android.boom.graphics.SpriteData;
 
 class CanvasThread extends Thread {
 
@@ -21,6 +22,10 @@ class CanvasThread extends Thread {
 	
     SurfaceHolder mHolder;
     private Paint mPaint;
+    
+    /* Background */
+    private Bitmap ground = SpriteData.bgSprites[SpriteData.BG_GROUND];
+    private Bitmap mountains = SpriteData.bgSprites[SpriteData.BG_MOUNTAINS];
     
     /* StopWatch Variables */
     private int frameCount;
@@ -128,6 +133,8 @@ class CanvasThread extends Thread {
         watch.start();
     	SurfaceHolder holder = mHolder;
     	
+    	int bgColor = 0xff8da7b3;
+    	
     	mGame.createEnemyMissile ();
     	
     	//TODO: Hack to get the score up
@@ -139,9 +146,23 @@ class CanvasThread extends Thread {
             Canvas canvas = holder.lockCanvas();
 
             canvas.drawColor(Color.BLACK);
+            //canvas.drawColor(bgColor);
+
             canvas.translate(240.0f, 160.0f);
             camera.applyToCanvas(canvas);
-            
+
+            canvas.drawBitmap(
+            		ground,
+            		0.0f,
+            		320.0f-ground.getHeight(),
+            		mPaint);
+           
+            canvas.drawBitmap(
+            		mountains,
+            		-((mountains.getWidth() - 480.0f)*0.5f),
+            		320.0f-ground.getHeight()-mountains.getHeight(),
+            		mPaint);            
+
             mGame.updateProjectiles(elapsedTime);
             
             mGame.drawProjectiles (canvas, mPaint, elapsedTime);
