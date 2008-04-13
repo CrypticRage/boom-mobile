@@ -1,5 +1,8 @@
 package com.anvil.android.boom.logic;
 
+import com.anvil.android.boom.graphics.SpriteData;
+import com.anvil.android.boom.graphics.SpriteInstance;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -10,8 +13,8 @@ public class GameMissileSmart extends GameMissileNormal {
 	
 	public static final int DEFAULT_SMART_MISSILE_DAMAGE = 100;
 	
-	public static final int DEFAULT_SMART_MISSILE_VELOCITY = 200;
-	public static final float DEFAULT_SMART_MISSILE_EXPLOSION_RADIUS = 45;
+	public static final int DEFAULT_SMART_MISSILE_VELOCITY = 250;
+	public static final float DEFAULT_SMART_MISSILE_EXPLOSION_RADIUS = 15;
 	
 	public static final int SMART_MISSILE_SCORE_MULTIPLIER = 2;
 	
@@ -22,11 +25,16 @@ public class GameMissileSmart extends GameMissileNormal {
 		mExplosionDamage = DEFAULT_SMART_MISSILE_DAMAGE;
 	}
 	
-	public GameMissileSmart (float explosionRadius, float startingX, float startingY, boolean friendly, float endingX, float endingY)
+	public GameMissileSmart (float explosionRadius, float startingX, float startingY, float endingX, float endingY)
 	{
-		super (explosionRadius, startingX, startingY, friendly, endingX, endingY);
+		super (explosionRadius, startingX, startingY, endingX, endingY);
 		
 		mExplosionDamage = DEFAULT_SMART_MISSILE_DAMAGE;
+		
+		mSprite = new SpriteInstance(SpriteData.sprites[SpriteData.SMART_BOMB]);
+		
+		mSprite.setScale(0.20f);
+		mSprite.setRadius (12);
 	}
 	
 	@Override

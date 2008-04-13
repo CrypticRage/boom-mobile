@@ -15,7 +15,7 @@ public abstract class GameMissile extends GameObject {
 	
 	public static final int DEFAULT_NUM_SMOKE_PARTICLES = 30;
 	public static final float DEFAULT_PROXIMITY_RADIUS = 5;
-	public static final float DEFAULT_FRIENDLY_MISSILE_VELOCITY = 75;
+	public static final float DEFAULT_FRIENDLY_MISSILE_VELOCITY = 125;
 	
 	public static final int DEFAULT_SCORE_VALUE = 100;
 	
@@ -42,7 +42,7 @@ public abstract class GameMissile extends GameObject {
 		mPointsAward = DEFAULT_SCORE_VALUE;
 	}
 	
-	public GameMissile (float radius, float startingX, float startingY, boolean friendly, float endingX, float endingY)
+	public GameMissile (float radius, float startingX, float startingY, float endingX, float endingY)
 	{
 		mExplosionRadius = radius;
 		mProximityRadius = DEFAULT_PROXIMITY_RADIUS;
@@ -50,18 +50,6 @@ public abstract class GameMissile extends GameObject {
 		mStartingPos = new PointF (startingX, startingY);
 		mCurrentPos = new PointF (startingX, startingY);
 		setTargetPos (new PointF (endingX, endingY));
-		
-		if (friendly)
-		{
-			mSprite = new SpriteInstance(SpriteData.sprites[SpriteData.STD_MISSILE]);
-		}
-		else
-		{
-			mSprite = new SpriteInstance(SpriteData.sprites[SpriteData.STD_MISSILE]);
-		}
-		
-		mSprite.setScale(0.20f);
-		mSprite.setRadius (12);
 		
 		mExplosion = null;
 		

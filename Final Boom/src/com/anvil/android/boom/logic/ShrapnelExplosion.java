@@ -36,7 +36,7 @@ public class ShrapnelExplosion extends Explosion {
 			targetPos.y = (float) (y + (radius * Math.cos (angle)));
 			GameMissileNormal m = new GameMissileNormal (DEFAULT_PIECE_EXPLOSION_RADIUS,
 														 x + parentProximityRadius,
-														 y + parentProximityRadius, true,
+														 y + parentProximityRadius,
 														 targetPos.x, targetPos.y);
 
 
