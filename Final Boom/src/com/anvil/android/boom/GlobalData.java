@@ -21,6 +21,7 @@ public class GlobalData {
 	public static final int STATUS_UPDATE_EVENT_TYPE = 2;
 	public static final int ENEMY_MISSILE_GENERATION = 3;
 	public static final int FRIENDLY_MISSILE_RELOAD = 4;
+	public static final int BASE_KILLER_RESPAWN = 5;
 		
 	public static final int STANDARD_MISSILE = 0;
 	public static final int SMART_BOMB = 1;	
