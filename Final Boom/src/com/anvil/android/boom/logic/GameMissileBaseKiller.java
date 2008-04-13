@@ -13,9 +13,9 @@ public class GameMissileBaseKiller extends GameMissileNormal {
 		mExplosionDamage = DEFAULT_BASE_KILLER_MISSILE_DAMAGE;
 	}
 	
-	public GameMissileBaseKiller (float explosionRadius, float startingX, float startingY, boolean friendly)
+	public GameMissileBaseKiller (float explosionRadius, float startingX, float startingY, boolean friendly, float endingX, float endingY)
 	{
-		super (explosionRadius, startingX, startingY, friendly);
+		super (explosionRadius, startingX, startingY, friendly, endingX, endingY);
 		
 		mExplosionDamage = DEFAULT_BASE_KILLER_MISSILE_DAMAGE;
 	}

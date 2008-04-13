@@ -32,15 +32,15 @@ public class ShrapnelExplosion extends Explosion {
 			double angle = rand.nextDouble () * (2 * Math.PI);
 			PointF targetPos = new PointF (x, y);
 			float parentProximityRadius = parent.getProximityRadius ();
-			GameMissileNormal m = new GameMissileNormal (DEFAULT_PIECE_EXPLOSION_RADIUS,
-														 x + parentProximityRadius,
-														 y + parentProximityRadius, true);
-
 			targetPos.x = (float) (x + (radius * Math.sin (angle)));
 			targetPos.y = (float) (y + (radius * Math.cos (angle)));
-			
+			GameMissileNormal m = new GameMissileNormal (DEFAULT_PIECE_EXPLOSION_RADIUS,
+														 x + parentProximityRadius,
+														 y + parentProximityRadius, true,
+														 targetPos.x, targetPos.y);
+
+
 			m.setVelocity (velocity);
-			m.setTargetPos (targetPos);
 			m.setState (GameObject.STATE_ALIVE);
 			m.setMotionSolver (ms);
 			

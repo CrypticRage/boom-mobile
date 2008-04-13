@@ -42,13 +42,14 @@ public abstract class GameMissile extends GameObject {
 		mPointsAward = DEFAULT_SCORE_VALUE;
 	}
 	
-	public GameMissile (float radius, float startingX, float startingY, boolean friendly)
+	public GameMissile (float radius, float startingX, float startingY, boolean friendly, float endingX, float endingY)
 	{
 		mExplosionRadius = radius;
 		mProximityRadius = DEFAULT_PROXIMITY_RADIUS;
 		
 		mStartingPos = new PointF (startingX, startingY);
 		mCurrentPos = new PointF (startingX, startingY);
+		setTargetPos (new PointF (endingX, endingY));
 		
 		if (friendly)
 		{
