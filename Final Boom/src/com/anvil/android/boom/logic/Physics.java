@@ -25,18 +25,15 @@ public class Physics {
 	}
 	
 	public static PointF scale (PointF p, float scale) {
-		p.x *= scale;
-		p.y *= scale;
-		return new PointF(p.x, p.y);
+		PointF newPoint = new PointF(p.x * scale, p.y * scale);
+		return newPoint;
 	}
 
 	public static PointF normalize (PointF p) {
 		float distance = calculateDistance(new PointF(0.0f, 0.0f), p);
-		p.x /= distance;
-		p.y /= distance;
-		return new PointF(p.x, p.y);
+		PointF newPoint = new PointF(p.x/distance, p.y/distance);
+		return newPoint;
 	}
-
 
 	public static boolean checkCrossing (PointF startingPos, PointF targetPos, PointF nextPos) {
 		boolean targetReached = false;
