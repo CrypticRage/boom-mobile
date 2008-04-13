@@ -77,8 +77,6 @@ public abstract class GameMissile extends GameObject {
 	{
 		mCurrentPos = currentPos;
 
-		//mSmokeEmitter.x = currentPos.x;
-		//mSmokeEmitter.y = currentPos.y;
 		mSmokeEmitter.x = currentPos.x + smokeOffset.x;
 		mSmokeEmitter.y = currentPos.y + smokeOffset.y;
 	}

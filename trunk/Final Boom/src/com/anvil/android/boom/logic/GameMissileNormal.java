@@ -15,33 +15,20 @@ public class GameMissileNormal extends GameMissile {
 	
 	public GameMissileNormal()
 	{
-		super ();
-		
+		super ();	
 		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
 	}
 	
 	public GameMissileNormal (float explosionRadius, float startingX, float startingY, float endingX, float endingY)
 	{
 		super (explosionRadius, startingX, startingY, endingX, endingY);
-		
-		//TODO: Need to change so we're not accessing a specific index in the sprite array
-		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES,
-				startingX, startingY, SpriteData.sprites[SpriteData.SMOKE_CLOUD]);
-		
-		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
+		init(startingX, startingY);
 	}
 	
 	public GameMissileNormal (float explosionRadius, float startingX, float startingY, float endingX, float endingY, boolean friendly)
 	{
 		super (explosionRadius, startingX, startingY, endingX, endingY);
-		
-		//TODO: Need to change so we're not accessing a specific index in the sprite array
-		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES,
-				startingX, startingY, SpriteData.sprites[SpriteData.SMOKE_CLOUD]);
-		mSmokeEmitter.angle = drawAngle;
-		smokeOffset = Physics.scale(mVelocityVector, -12.0f);
-		
-		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;
+		init(startingX, startingY);
 		
 		if (friendly)
 		{
@@ -50,9 +37,17 @@ public class GameMissileNormal extends GameMissile {
 		else
 		{
 			mSprite = new SpriteInstance(SpriteData.sprites[SpriteData.STD_MISSILE]);
-		}
-		
+		}	
 		mSprite.setRadius (12.0f);
+	}
+	
+	private void init(float startingX, float startingY) {
+		mSmokeEmitter = new SmokeEmitter2D (DEFAULT_NUM_SMOKE_PARTICLES,
+				startingX, startingY, SpriteData.sprites[SpriteData.SMOKE_CLOUD]);
+		mSmokeEmitter.angle = drawAngle;
+		smokeOffset = Physics.scale(mVelocityVector, -12.0f);
+		
+		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;	
 	}
 	
 	@Override
