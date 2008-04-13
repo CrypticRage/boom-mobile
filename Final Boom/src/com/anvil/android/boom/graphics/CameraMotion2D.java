@@ -7,7 +7,7 @@ import com.anvil.android.boom.logic.Physics;
 
 public class CameraMotion2D {
 	private Camera2D camera;
-	private float zoomVelocity = 0.0f;
+	private float maxHeight;
 	
 	private PointF currentPoint;
 	private float currentRadius = 1.0f;	
@@ -16,6 +16,7 @@ public class CameraMotion2D {
 	private PointF endPoint;
 	private float endRadius = 1.0f;
 	
+	private float zoomVelocity = 0.0f;
 	private PointF velocityVector;
 	private float velocityScalar = 1.0f;
 	
@@ -33,6 +34,7 @@ public class CameraMotion2D {
 		endPoint = new PointF(0.0f, 0.0f);		
 		currentPoint = new PointF(0.0f, 0.0f);
 		velocityVector = new PointF(0.0f, 0.0f);
+		maxHeight = (camera.getView()).height();
 	}
 
 	public void updateMotion(int elapsed) {
@@ -55,9 +57,7 @@ public class CameraMotion2D {
 		float scalar = 0.0f;
 		scalar = velocityScalar * elapsed * Physics.INV_MICROSECONDS_PER_SECOND;
 		float x = scalar * velocityVector.x;
-		float y = scalar * velocityVector.y;
-		currentPoint.x += x;
-		currentPoint.y += y;
+		float y = scalar * velocityVector.y;	
 		
 		if (Physics.checkCrossing(startPoint, endPoint, currentPoint)) {
 			if (state == MOVING) {
@@ -71,14 +71,19 @@ public class CameraMotion2D {
 			}
 			camera.moveTo(endPoint.x, endPoint.y);
 		}
+		
 		else {
 			camera.move(x, y);
 		}
+	
+		currentPoint.x = camera.getCenterX();
+		currentPoint.y = camera.getCenterY();
 	}
 	
 	private void zoom(int elapsed) {
 		float z = 0.0f;
 		z = zoomVelocity * elapsed * Physics.INV_MICROSECONDS_PER_SECOND;
+		//float cameraBottom = (camera.getView()).bottom;
 		
 		if ((state == ZOOM_IN) || (state == MOVE_ZOOM_IN)) {
 			currentRadius -= z;
@@ -93,15 +98,21 @@ public class CameraMotion2D {
 			else {
 				camera.zoom(currentRadius);
 			}
+		
+			/*
+			if (cameraBottom >= maxHeight) {
+				camera.move(0.0f, -(cameraBottom-maxHeight));
+			}
+			*/
 		}
 		
 		if ((state == ZOOM_OUT) || (state == MOVE_ZOOM_OUT)) {
 			currentRadius += z;
-			if (state == ZOOM_OUT && currentRadius >= endRadius) {
+			if ((state == ZOOM_OUT) && (currentRadius >= endRadius)) {
 				state = IDLE;
 				camera.zoom(endRadius);
 			}
-			else if (state == MOVE_ZOOM_OUT && currentRadius >= endRadius) {
+			else if ((state == MOVE_ZOOM_OUT) && (currentRadius >= endRadius)) {
 				state = MOVING;
 				camera.zoom(endRadius);
 			}
@@ -127,23 +138,26 @@ public class CameraMotion2D {
 	}
 
 	public void startMotion() {
-		if (state == IDLE) {
-			if (startRadius == endRadius) {
-				state = MOVING;
-			}
-			else if ((startRadius > endRadius) && !startPoint.equals(endPoint.x, endPoint.y)) {
-				state = MOVE_ZOOM_IN;
-			}
-			else if ((startRadius < endRadius) && !startPoint.equals(endPoint.x, endPoint.y)) {
-				state = MOVE_ZOOM_OUT;
-			}
-			else if ((startRadius < endRadius) && startPoint.equals(endPoint.x, endPoint.y)) {
-				state = ZOOM_OUT;
-			}
-			else if ((startRadius > endRadius) && startPoint.equals(endPoint.x, endPoint.y)) {
-				state = ZOOM_IN;
-			}
+		if (startRadius == endRadius) {
+			state = MOVING;
 		}
+		else if ((startRadius > endRadius) && !startPoint.equals(endPoint.x, endPoint.y)) {
+			state = MOVE_ZOOM_IN;
+		}
+		else if ((startRadius < endRadius) && !startPoint.equals(endPoint.x, endPoint.y)) {
+			Log.i("CameraMotion2D", "MOVE_ZOOM_OUT motion started.");
+			state = MOVE_ZOOM_OUT;
+		}
+		else if ((startRadius < endRadius) && startPoint.equals(endPoint.x, endPoint.y)) {
+			state = ZOOM_OUT;
+		}
+		else if ((startRadius > endRadius) && startPoint.equals(endPoint.x, endPoint.y)) {
+			state = ZOOM_IN;
+		}
+	}
+	
+	public void stopMotion() {
+		state = IDLE;
 	}
 	
 	public void setVelocityScalar(float vel) {
