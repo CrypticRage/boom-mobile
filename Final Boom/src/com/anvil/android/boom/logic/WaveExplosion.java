@@ -44,7 +44,7 @@ public class WaveExplosion extends Explosion {
 											y,
 											velocity,
 											radius,
-											SpriteData.sprites[SpriteData.SMOKE_CLOUD]
+											SpriteData.sprites[SpriteData.BLAST]
 		);
 	}
 	

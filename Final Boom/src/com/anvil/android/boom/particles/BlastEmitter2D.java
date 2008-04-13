@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
+import com.anvil.android.boom.graphics.SpriteInstance;
 
 public class BlastEmitter2D extends ParticleEmitter2D {
 	public int status;
@@ -72,6 +73,7 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 			if (radius >= maxRadius) {
 				radius = maxRadius;
 			}
+			p.sprite.setRadius(radius*1.10f);
 		}
 	}
 	
@@ -79,13 +81,13 @@ public class BlastEmitter2D extends ParticleEmitter2D {
 		if (status == ALIVE) {
 			canvas.save();
 			paint.setColor(color);
-			paint.setAlpha(125);
+			paint.setAlpha(200);
 			SpriteParticle2D p = (SpriteParticle2D)livePool.get(0);
-			//SpriteInstance tempSprite = p.sprite;
-			//canvas.translate(p.x, p.y);
-			canvas.drawCircle(p.x, p.y, radius, paint);
+			SpriteInstance tempSprite = p.sprite;
+			canvas.translate(p.x, p.y);
 			//canvas.rotate(0, this.x, this.y);
-			//canvas.drawBitmap(tempSprite.sprite, null, tempSprite.getDrawBox(), this.paint);
+			//canvas.drawCircle(p.x, p.y, radius, paint);
+			canvas.drawBitmap(tempSprite.sprite, null, tempSprite.getDrawBox(), this.paint);
 			canvas.restore();			
 		}
 	}

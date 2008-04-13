@@ -1,12 +1,8 @@
 package com.anvil.android.boom.logic;
 
-import com.anvil.android.boom.GlobalData;
 import com.anvil.android.boom.particles.SmokeEmitter2D;
-import com.anvil.android.boom.graphics.SpriteInstance;
-import com.anvil.android.boom.graphics.SpriteData;
 
 import android.graphics.Canvas;
-import android.graphics.RectF;
 import android.graphics.Paint;
 import android.graphics.PointF;
 
