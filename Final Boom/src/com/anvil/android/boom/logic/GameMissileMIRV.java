@@ -2,7 +2,6 @@ package com.anvil.android.boom.logic;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.RectF;
 
 
 public class GameMissileMIRV extends GameMissile {
