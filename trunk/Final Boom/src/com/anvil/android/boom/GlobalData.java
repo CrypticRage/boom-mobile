@@ -1,8 +1,6 @@
 package com.anvil.android.boom;
 
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.Rect;
 import android.os.Handler;
 
 public class GlobalData {
@@ -10,12 +8,6 @@ public class GlobalData {
 	public static volatile long frameTimeMicro = 0;
 	public static volatile int overCount = 0;
 	public static volatile long overTimeMicro = 0;
-	
-	public static volatile Bitmap[] sprites;
-	public static volatile Bitmap background;
-	
-	public static volatile float x, y;
-	public static volatile Rect clipBox;
 	
 	public static volatile Handler uiThreadHandler;
 	public static volatile Handler canvasThreadHandler;
@@ -33,5 +25,4 @@ public class GlobalData {
 	public static final int STANDARD_MISSILE = 0;
 	public static final int SMART_BOMB = 1;	
 	public static volatile int AMMO_TYPE = STANDARD_MISSILE;
-
 }

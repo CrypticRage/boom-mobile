@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.SurfaceHolder;
 
+import com.anvil.android.boom.GlobalData;
 import com.anvil.android.boom.util.StopWatch;
 import com.anvil.android.boom.graphics.Camera2D;
 import com.anvil.android.boom.graphics.CameraMotion2D;
@@ -28,7 +29,9 @@ class CanvasThread extends Thread {
     
 	/* Camera */
 	private Camera2D camera;
-	private CameraMotion2D smartBombMotion;
+	private CameraMotion2D cameraMotion;
+	private float minRadius;
+	private float maxRadius;
 	
 	/* Screen Dimensions */
 	private float screenHeight = 0.0f;
@@ -40,7 +43,12 @@ class CanvasThread extends Thread {
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);       
         
-    	frameCount = 0;
+    	camera = new Camera2D(480.0f, 320.0f);
+        cameraMotion = new CameraMotion2D(camera);
+        minRadius = 60.0f;
+        maxRadius = 160.0f;
+        
+        frameCount = 0;
     	watch = new StopWatch();
         
         elapsedTime = 0;
@@ -54,8 +62,43 @@ class CanvasThread extends Thread {
     			{
     				case GlobalData.MOTION_EVENT_TYPE:
     					PointF tempPoint = (PointF) msg.obj;
+
+    					if (cameraMotion.getState() == CameraMotion2D.IDLE &&
+    						GlobalData.AMMO_TYPE == GlobalData.STANDARD_MISSILE ) {
+        					mGame.createFriendlyMissile (tempPoint.x, tempPoint.y);
+    					}
     					
-    					mGame.createFriendlyMissile (tempPoint.x, tempPoint.y);
+    					else if (	(cameraMotion.getState() == CameraMotion2D.IDLE) &&
+        							(GlobalData.AMMO_TYPE == GlobalData.SMART_BOMB) &&
+        							(camera.getRadius() > minRadius)
+    					) {
+    						tempPoint.x = (camera.getView()).left + (tempPoint.x/480.0f)*camera.getView().width();
+    						tempPoint.y = (camera.getView()).top + (tempPoint.y/320.0f)*camera.getView().height();   	
+    				    	if (tempPoint.y > (320.0f-minRadius)) {
+    				    		tempPoint.y = 320.0f-minRadius;
+    				    	}
+    						cameraMotion.setMotion(tempPoint.x, tempPoint.y, minRadius);
+    				    	cameraMotion.setVelocityScalar(20.0f);
+    				    	cameraMotion.setZoomScalar(80.0f);
+    				    	cameraMotion.startMotion(); 						
+        				}
+    					
+    					else if (	( !(cameraMotion.getState() == CameraMotion2D.IDLE) &&
+										(GlobalData.AMMO_TYPE == GlobalData.SMART_BOMB) )
+										||
+									( (cameraMotion.getState() == CameraMotion2D.IDLE) &&
+										(GlobalData.AMMO_TYPE == GlobalData.SMART_BOMB) &&
+										(camera.getRadius() <= minRadius) )
+    					) {
+    						tempPoint.x = (camera.getView()).left + (tempPoint.x/480.0f)*camera.getView().width();
+    						tempPoint.y = (camera.getView()).top + (tempPoint.y/320.0f)*camera.getView().height();
+        					cameraMotion.stopMotion(); 						
+        					mGame.createFriendlyMissile (tempPoint.x, tempPoint.y);
+        					cameraMotion.setMotion(240.0f, 160.0f, maxRadius);
+    				    	cameraMotion.setVelocityScalar(20.0f);
+    				    	cameraMotion.setZoomScalar(90.0f);
+    				    	cameraMotion.startMotion();
+    					}
     					break;
     					
     				case GlobalData.ENEMY_MISSILE_GENERATION:
@@ -96,18 +139,25 @@ class CanvasThread extends Thread {
             Canvas canvas = holder.lockCanvas();
 
             canvas.drawColor(Color.BLACK);
+            canvas.translate(240.0f, 160.0f);
+            camera.applyToCanvas(canvas);
             
             mGame.updateProjectiles(elapsedTime);
             
             mGame.drawProjectiles (canvas, mPaint, elapsedTime);
             mGame.drawBases (canvas, mPaint, elapsedTime);
 
-            frameCount++; 	        
-	                   
+            frameCount++; 	                 
+                  
             /* Stopwatch */
             watch.stop();
             elapsedTime = watch.getElapsedTimeMicro();
-        	if (elapsedTime > 200000) {
+        	
+            if (!(cameraMotion.getState() == CameraMotion2D.IDLE)) {
+            	cameraMotion.updateMotion((int)elapsedTime);
+            }
+            
+            if (elapsedTime > 200000) {
         		GlobalData.overTimeMicro = elapsedTime;
         		GlobalData.overCount++;
         	}

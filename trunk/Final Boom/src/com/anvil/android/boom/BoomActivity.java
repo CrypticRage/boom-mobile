@@ -2,6 +2,7 @@ package com.anvil.android.boom;
 
 import com.anvil.android.boom.BoomView;
 import com.anvil.android.boom.GlobalData;
+import com.anvil.android.boom.graphics.SpriteData;
 import com.anvil.android.boom.R;
 
 import android.app.Activity;
@@ -69,8 +70,6 @@ public class BoomActivity extends Activity {
     
     @Override
 	protected void onResume() {
-        // Because the CameraDevice object is not a shared resource,
-        // it's very important to release it when the activity is paused.
         super.onResume();
         mPreview.resume();
     }
@@ -127,20 +126,19 @@ public class BoomActivity extends Activity {
     }
     
     private void loadSprites() {
-    	GlobalData.sprites = new Bitmap[5];
-    	GlobalData.sprites[0] = BitmapFactory.decodeResource(getResources(),
-    			R.drawable.cloud_tiny);
-    	GlobalData.sprites[1] = BitmapFactory.decodeResource(getResources(),
-    			R.drawable.friendly_missile); 	
-    	GlobalData.sprites[2] = BitmapFactory.decodeResource(getResources(),
-    			R.drawable.blast); 
-    	GlobalData.sprites[3] = BitmapFactory.decodeResource(getResources(),
-    			R.drawable.base);
-    	GlobalData.sprites[4] = BitmapFactory.decodeResource(getResources(),
-    			R.drawable.enemy_missile); 
-    	
-    	GlobalData.background = BitmapFactory.decodeResource(getResources(),
-    			R.drawable.sundown);
+    	SpriteData.sprites = new Bitmap[SpriteData.spriteCount];
+    	SpriteData.sprites[SpriteData.SMOKE_CLOUD] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.smoke_cloud);
+    	SpriteData.sprites[SpriteData.STD_MISSILE] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.std_missile);
+    	SpriteData.sprites[SpriteData.SMART_BOMB] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.smart_bomb);
+    	SpriteData.sprites[SpriteData.GOLD_MISSILE] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.gold_missile);
+    	SpriteData.sprites[SpriteData.DOME_BASE] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.dome_base);
+    	SpriteData.sprites[SpriteData.RED_CROSS] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.red_cross);
     }
   
     private void loadFonts() {
