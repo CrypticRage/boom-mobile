@@ -15,7 +15,7 @@ public class GlobalData {
 	public static volatile Typeface textFont;
 	
 	public static volatile int gameScore = 0; 
-	public static volatile String bottomStatusText;
+	public static volatile String scoreText;
 	
 	public static final int MOTION_EVENT_TYPE = 1;
 	public static final int STATUS_UPDATE_EVENT_TYPE = 2;

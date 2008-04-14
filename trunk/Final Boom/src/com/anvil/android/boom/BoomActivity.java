@@ -6,9 +6,9 @@ import com.anvil.android.boom.graphics.SpriteData;
 import com.anvil.android.boom.R;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,7 +23,6 @@ public class BoomActivity extends Activity {
 	private TextView topLeftTextView, topMiddleTextView, topRightTextView;
 	private BoomView mPreview;
 	private ImageButton[] buttons;
-    private ImageButton startButton;
 	
 	// Need handler for callbacks to the UI thread
 	private volatile Handler mHandler = new Handler();
@@ -54,14 +53,7 @@ public class BoomActivity extends Activity {
         		WindowManager.LayoutParams.FLAG_NO_STATUS_BAR); 
     
         buttons = new ImageButton[2];
-        
-        /*
-        setContentView(R.layout.intro);
-        startButton = (ImageButton)this.findViewById(R.id.start_button);
-        startButton.setAlpha(50);
-        loadStartButton();
-        */
-        
+             
         setContentView(R.layout.boom);
         mPreview = (BoomView)this.findViewById(R.id.main_canvas);
         topMiddleTextView = (TextView)this.findViewById(R.id.top_middle);
@@ -69,16 +61,17 @@ public class BoomActivity extends Activity {
         topLeftTextView = (TextView)this.findViewById(R.id.top_left);
         
         createButtons();
-        loadSprites();
-        //loadFonts();     
-
-        updateTopRightText();
+        loadSprites(); 
+        loadFont();
+        
+        //updateTopRightText();
         updateTopMiddleText();
     }
     
     @Override
 	protected void onResume() {
-        super.onResume();
+        GlobalData.gameScore = 0;
+    	super.onResume();
         mPreview.resume();
     }
 
@@ -96,36 +89,12 @@ public class BoomActivity extends Activity {
     			"overCount: " + GlobalData.overCount);
     	mHandler.postDelayed(mTopMiddleUpdate, 1000);
     }
-     
+    
     private void updateTopMiddleText() {
-    	topMiddleTextView.setText(GlobalData.bottomStatusText);
-    	mHandler.postDelayed(mTopRightUpdate, 2000);
+    	topMiddleTextView.setText(GlobalData.scoreText);
+    	mHandler.postDelayed(mTopMiddleUpdate, 2000);
     }   
-    
-    private void loadStartButton() {
-        startButton.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-               	startButton.setAlpha(255);
-                startMainView();           
-            }
-        });
-    }
-    
-    public void startMainView() {
-       	setContentView(R.layout.boom);
-    	mPreview = (BoomView)this.findViewById(R.id.main_canvas);
-        topMiddleTextView = (TextView)this.findViewById(R.id.top_middle);
-        topRightTextView = (TextView)this.findViewById(R.id.top_right);
-        topLeftTextView = (TextView)this.findViewById(R.id.top_left);
-        
-        createButtons();
-        loadSprites();
-        //loadFonts();     
-
-        updateTopRightText();
-        updateTopMiddleText();     	
-    }
-    
+       
     private void createButtons() {
         buttons[0] = (ImageButton)this.findViewById(R.id.button1);
         buttons[1] = (ImageButton)this.findViewById(R.id.button2);
@@ -173,6 +142,8 @@ public class BoomActivity extends Activity {
     			R.drawable.red_cross);
     	SpriteData.sprites[SpriteData.BLAST] = BitmapFactory.decodeResource(getResources(),
     			R.drawable.blast);
+    	SpriteData.sprites[SpriteData.INTRO_SCREEN] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.intro);
     	
     	SpriteData.bgSprites = new Bitmap[SpriteData.bgSpriteCount];
     	SpriteData.bgSprites[SpriteData.BG_GROUND] = BitmapFactory.decodeResource(getResources(),
@@ -180,10 +151,9 @@ public class BoomActivity extends Activity {
     	SpriteData.bgSprites[SpriteData.BG_MOUNTAINS] = BitmapFactory.decodeResource(getResources(),
     			R.drawable.mountains);
     }
-  
-    private void loadFonts() {
-    	Typeface tempType = Typeface.createFromAsset(getAssets(),
-        	"fonts/sample_font.ttf");
-    	topMiddleTextView.setTypeface(tempType);
+
+    private void loadFont() {
+    	GlobalData.textFont = Typeface.createFromAsset(getAssets(),
+        	"fonts/blade_runner.TTF");
     }
 }
