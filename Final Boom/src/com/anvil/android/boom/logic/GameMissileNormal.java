@@ -12,6 +12,7 @@ import android.graphics.RectF;
 public class GameMissileNormal extends GameMissile {
 	
 	public static final int DEFAULT_NORMAL_MISSILE_DAMAGE = 100;
+	public boolean friendly = false;
 	
 	public GameMissileNormal()
 	{
@@ -30,6 +31,8 @@ public class GameMissileNormal extends GameMissile {
 		super (explosionRadius, startingX, startingY, endingX, endingY);
 		init(startingX, startingY);
 		
+		this.friendly = friendly;
+		
 		if (friendly)
 		{
 			mSprite = new SpriteInstance(SpriteData.sprites[SpriteData.STD_MISSILE]);
@@ -46,6 +49,9 @@ public class GameMissileNormal extends GameMissile {
 				startingX, startingY, SpriteData.sprites[SpriteData.SMOKE_CLOUD]);
 		mSmokeEmitter.angle = drawAngle;
 		smokeOffset = Physics.scale(mVelocityVector, -12.0f);
+		
+		cross = new SpriteInstance(SpriteData.sprites[SpriteData.RED_CROSS]);
+		cross.setRadius(20.0f);
 		
 		mExplosionDamage = DEFAULT_NORMAL_MISSILE_DAMAGE;	
 	}
@@ -68,17 +74,26 @@ public class GameMissileNormal extends GameMissile {
 		{
 			case GameObject.STATE_ALIVE:
 			{
-				RectF tempBox = mSprite.getDrawBox();
+				RectF missileBox = mSprite.getDrawBox();
 				
+				// draw smoke
 				mSmokeEmitter.update (timeElapsed);
 				mSmokeEmitter.draw (canvas);
 				
+				// draw missile
 				canvas.save();
 				canvas.translate(mCurrentPos.x, mCurrentPos.y);
 				canvas.rotate(drawAngle);				
-		    	canvas.drawBitmap(mSprite.sprite, null, tempBox, paint);
+		    	canvas.drawBitmap(mSprite.sprite, null, missileBox, paint);
 				canvas.restore();
-				
+
+				// draw crosshair		
+				if (friendly) {
+					canvas.save();
+					canvas.translate(mTargetPos.x, mTargetPos.y);
+					canvas.drawBitmap(cross.sprite, null, cross.getDrawBox(), paint);
+					canvas.restore();					
+				}
 			}
 			break;
 			

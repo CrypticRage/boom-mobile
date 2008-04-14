@@ -49,7 +49,7 @@ class BoomView extends SurfaceView implements SurfaceHolder.Callback {
 					
 					//Update the GlobalData fields
 					GlobalData.gameScore = gameScore;
-					GlobalData.bottomStatusText = newStatus;
+					GlobalData.scoreText = newStatus;
 					break;
 
 				default:

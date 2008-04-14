@@ -7,7 +7,7 @@ import com.anvil.android.boom.logic.Physics;
 
 public class CameraMotion2D {
 	private Camera2D camera;
-	private float maxHeight;
+	//private float maxHeight;
 	
 	private PointF currentPoint;
 	private float currentRadius = 1.0f;	
@@ -34,7 +34,7 @@ public class CameraMotion2D {
 		endPoint = new PointF(0.0f, 0.0f);		
 		currentPoint = new PointF(0.0f, 0.0f);
 		velocityVector = new PointF(0.0f, 0.0f);
-		maxHeight = (camera.getView()).height();
+		//maxHeight = (camera.getView()).height();
 	}
 
 	public void updateMotion(int elapsed) {

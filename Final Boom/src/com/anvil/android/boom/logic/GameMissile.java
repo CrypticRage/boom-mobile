@@ -1,6 +1,7 @@
 package com.anvil.android.boom.logic;
 
 import com.anvil.android.boom.particles.SmokeEmitter2D;
+import com.anvil.android.boom.graphics.SpriteInstance;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -23,8 +24,8 @@ public abstract class GameMissile extends GameObject {
 	
 	protected SmokeEmitter2D mSmokeEmitter;
 	protected PointF smokeOffset = new PointF(0.0f, 0.0f);
-	//protected PointF smokeOffset;
-	
+
+	protected SpriteInstance cross;
 	// TODO find some list type to use.
 	// TODO if a MIRV exists as children in a container, how do the child missiles get
 	//      promoted to the main list when the container 'opens?'  Does this even need to happen
