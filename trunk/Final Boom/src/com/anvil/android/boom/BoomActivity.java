@@ -23,7 +23,8 @@ public class BoomActivity extends Activity {
 	private TextView topLeftTextView, topMiddleTextView, topRightTextView;
 	private BoomView mPreview;
 	private ImageButton[] buttons;
-    
+    private ImageButton startButton;
+	
 	// Need handler for callbacks to the UI thread
 	private volatile Handler mHandler = new Handler();
 
@@ -53,6 +54,13 @@ public class BoomActivity extends Activity {
         		WindowManager.LayoutParams.FLAG_NO_STATUS_BAR); 
     
         buttons = new ImageButton[2];
+        
+        /*
+        setContentView(R.layout.intro);
+        startButton = (ImageButton)this.findViewById(R.id.start_button);
+        startButton.setAlpha(50);
+        loadStartButton();
+        */
         
         setContentView(R.layout.boom);
         mPreview = (BoomView)this.findViewById(R.id.main_canvas);
@@ -93,6 +101,30 @@ public class BoomActivity extends Activity {
     	topMiddleTextView.setText(GlobalData.bottomStatusText);
     	mHandler.postDelayed(mTopRightUpdate, 2000);
     }   
+    
+    private void loadStartButton() {
+        startButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+               	startButton.setAlpha(255);
+                startMainView();           
+            }
+        });
+    }
+    
+    public void startMainView() {
+       	setContentView(R.layout.boom);
+    	mPreview = (BoomView)this.findViewById(R.id.main_canvas);
+        topMiddleTextView = (TextView)this.findViewById(R.id.top_middle);
+        topRightTextView = (TextView)this.findViewById(R.id.top_right);
+        topLeftTextView = (TextView)this.findViewById(R.id.top_left);
+        
+        createButtons();
+        loadSprites();
+        //loadFonts();     
+
+        updateTopRightText();
+        updateTopMiddleText();     	
+    }
     
     private void createButtons() {
         buttons[0] = (ImageButton)this.findViewById(R.id.button1);
