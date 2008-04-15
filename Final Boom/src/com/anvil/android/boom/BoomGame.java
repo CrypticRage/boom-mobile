@@ -61,6 +61,7 @@ public class BoomGame
 		GameBase base = new GameBase (240, 320,
 									  GameBase.DEFAULT_BASE_RADIUS,
 									  GameBase.DEFAULT_BASE_HIT_POINTS);
+		GlobalData.baseHealth = GameBase.DEFAULT_BASE_HIT_POINTS;
 		base.setState (GameObject.STATE_ALIVE);
 		mBases.add (base);
 		
@@ -615,6 +616,8 @@ public class BoomGame
 //											Log.i ("updateEnemyProjectiles: ", "Base took damage, HP: " + baseHP);
 										}
 									}
+									
+									GlobalData.baseHealth = baseHP;
 									
 									//If the base just died
 									if (baseHP <= 0)
