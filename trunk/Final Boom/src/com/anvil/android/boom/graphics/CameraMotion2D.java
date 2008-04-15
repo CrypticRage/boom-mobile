@@ -1,7 +1,7 @@
 package com.anvil.android.boom.graphics;
 
 import android.graphics.PointF;
-import android.util.Log;
+//import android.util.Log;
 
 import com.anvil.android.boom.logic.Physics;
 
@@ -49,7 +49,7 @@ public class CameraMotion2D {
 			zoom(elapsed);
 		}	
 		else if (state == IDLE) {
-			Log.w("CameraMotion2D", "Attempting to update motion in IDLE state.");
+//			Log.w("CameraMotion2D", "Attempting to update motion in IDLE state.");
 		}
 	}
 	
@@ -145,7 +145,7 @@ public class CameraMotion2D {
 			state = MOVE_ZOOM_IN;
 		}
 		else if ((startRadius < endRadius) && !startPoint.equals(endPoint.x, endPoint.y)) {
-			Log.i("CameraMotion2D", "MOVE_ZOOM_OUT motion started.");
+//			Log.i("CameraMotion2D", "MOVE_ZOOM_OUT motion started.");
 			state = MOVE_ZOOM_OUT;
 		}
 		else if ((startRadius < endRadius) && startPoint.equals(endPoint.x, endPoint.y)) {
