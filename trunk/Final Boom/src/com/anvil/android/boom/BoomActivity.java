@@ -23,6 +23,7 @@ public class BoomActivity extends Activity {
 	private TextView topLeftTextView, topMiddleTextView, topRightTextView;
 	private BoomView mPreview;
 	private ImageButton[] buttons;
+	private ImageButton closeButton;
 	
 	// Need handler for callbacks to the UI thread
 	private volatile Handler mHandler = new Handler();
@@ -107,6 +108,7 @@ public class BoomActivity extends Activity {
     private void createButtons() {
         buttons[0] = (ImageButton)this.findViewById(R.id.button1);
         buttons[1] = (ImageButton)this.findViewById(R.id.button2);
+        closeButton = (ImageButton)this.findViewById(R.id.close_button);
         
         buttons[0].setBackgroundColor(Color.GRAY);
         buttons[1].setBackgroundColor(Color.TRANSPARENT);
@@ -133,6 +135,12 @@ public class BoomActivity extends Activity {
                 buttons[0].setBackgroundColor(Color.TRANSPARENT);
             }
         }); 
+    
+        closeButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                System.exit(0);
+            }
+        });
     }
     
     private void loadSprites() {
