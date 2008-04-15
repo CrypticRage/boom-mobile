@@ -30,6 +30,8 @@ class CanvasThread extends Thread {
     /* Background */
     private Bitmap ground = SpriteData.bgSprites[SpriteData.BG_GROUND];
     private Bitmap mountains = SpriteData.bgSprites[SpriteData.BG_MOUNTAINS];
+    private Bitmap ground_flip = SpriteData.bgSprites[SpriteData.BG_GROUND_FLIP];
+    private Bitmap mountains_flip = SpriteData.bgSprites[SpriteData.BG_MOUNTAINS_FLIP];
     
     /* StopWatch Variables */
     private int frameCount;
@@ -169,17 +171,7 @@ class CanvasThread extends Thread {
             canvas.translate(240.0f, 160.0f);
             camera.applyToCanvas(canvas);
 
-            canvas.drawBitmap(
-            		ground,
-            		0.0f,
-            		320.0f-ground.getHeight(),
-            		mPaint);
-           
-            canvas.drawBitmap(
-            		mountains,
-            		-((mountains.getWidth() - 480.0f)*0.5f),
-            		320.0f-ground.getHeight()-mountains.getHeight(),
-            		mPaint);            
+            drawBackground(canvas);          
 
             mGame.updateProjectiles(elapsedTime);
             
@@ -221,6 +213,44 @@ class CanvasThread extends Thread {
     	canvas.drawText("Final Score: " + GlobalData.gameScore, 240.0f - 180.0f,
     			160.0f - 50.0f, mPaint);
     	holder.unlockCanvasAndPost(canvas);    
+    }
+    
+    private void drawBackground(Canvas canvas) {   
+    	canvas.drawBitmap(
+        		ground_flip,
+        		-ground_flip.getWidth(),
+        		320.0f-ground.getHeight(),
+        		mPaint);
+             
+    	canvas.drawBitmap(
+        		ground,
+        		0.0f,
+        		320.0f-ground.getHeight(),
+        		mPaint);
+       
+    	canvas.drawBitmap(
+        		ground_flip,
+        		ground_flip.getWidth(),
+        		320.0f-ground.getHeight(),
+        		mPaint);
+    	
+    	canvas.drawBitmap(
+        		mountains_flip,
+        		-mountains_flip.getWidth(),
+        		320.0f-ground.getHeight()-mountains.getHeight(),
+        		mPaint);
+    	
+    	canvas.drawBitmap(
+        		mountains,
+        		0.0f,
+        		320.0f-ground.getHeight()-mountains.getHeight(),
+        		mPaint);
+
+    	canvas.drawBitmap(
+        		mountains_flip,
+        		mountains_flip.getWidth(),
+        		320.0f-ground.getHeight()-mountains.getHeight(),
+        		mPaint);
     }
     
     public void requestExitAndWait() {

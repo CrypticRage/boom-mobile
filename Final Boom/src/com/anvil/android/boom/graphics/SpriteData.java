@@ -4,9 +4,11 @@ import android.graphics.Bitmap;
 
 public class SpriteData {
 	public static volatile Bitmap[] bgSprites;		
-	public static final int bgSpriteCount = 2;
+	public static final int bgSpriteCount = 4;
 	public static final int BG_GROUND = 0;
-	public static final int BG_MOUNTAINS = 1;
+	public static final int BG_GROUND_FLIP = 1;
+	public static final int BG_MOUNTAINS = 2;
+	public static final int BG_MOUNTAINS_FLIP = 3;
 	
 	public static volatile Bitmap[] sprites;
 	public static final int spriteCount = 8;
