@@ -27,14 +27,14 @@ public class BoomActivity extends Activity {
 	// Need handler for callbacks to the UI thread
 	private volatile Handler mHandler = new Handler();
 
-    // Create runnable for posting
+    // Create runnable for posting the score
     final private Runnable mTopMiddleUpdate = new Runnable() {
         public void run() {
         	updateTopMiddleText();
         }
     };
     
-    // Create runnable for posting
+    // Create runnable for posting the base health
     final private Runnable mTopRightUpdate = new Runnable() {
         public void run() {
         	updateTopRightText();
@@ -64,7 +64,7 @@ public class BoomActivity extends Activity {
         loadSprites(); 
         loadFont();
         
-        //updateTopRightText();
+        updateTopRightText();
         updateTopMiddleText();
     }
     
@@ -83,11 +83,19 @@ public class BoomActivity extends Activity {
     }
           
     private void updateTopRightText() {
-    	//fpsView.setText((1000000.0f / GlobalData.frameTimeMicro) + " fps");
+    	/* Debug Text */
+    	/*
     	topRightTextView.setText((1000000.0f / GlobalData.frameTimeMicro) + " fps\n" + 
     			GlobalData.overTimeMicro + " us \n" +
     			"overCount: " + GlobalData.overCount);
-    	mHandler.postDelayed(mTopMiddleUpdate, 1000);
+    	*/
+    	if (GlobalData.baseHealth <= 0)
+    		topRightTextView.setText("Base Destroyed!");
+    	else {
+    		topRightTextView.setText("Base Health: " + GlobalData.baseHealth);
+    	}
+    	mHandler.postDelayed(mTopRightUpdate, 1000);
+    	
     }
     
     private void updateTopMiddleText() {

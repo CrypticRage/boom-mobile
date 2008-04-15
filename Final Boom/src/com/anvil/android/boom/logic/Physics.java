@@ -35,6 +35,16 @@ public class Physics {
 		return newPoint;
 	}
 
+	public static float magnituge (PointF p) {
+		float mag = (float)Math.sqrt(p.x*p.x + p.y*p.y);
+		return mag;
+	}
+	
+	public static float dotProduct (PointF p1, PointF p2) {
+		float dot = p1.x*p2.x + p1.y*p2.y;
+		return dot;
+	}
+	
 	public static boolean checkCrossing (PointF startingPos, PointF targetPos, PointF nextPos) {
 		boolean targetReached = false;
 		
