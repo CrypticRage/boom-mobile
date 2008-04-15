@@ -74,11 +74,20 @@ public abstract class GameObject {
 
 	public void setTargetPos(PointF targetPos) {
 		mTargetPos = targetPos;
-		calcDrawAngle();
 		calcInitVelocity();
+		calcDrawAngle();
 	}
 
 	protected void calcDrawAngle() {
+		/*
+		PointF dir = new PointF(-1.0f, 0.0f);		
+		float dot = Physics.dotProduct(dir, mVelocityVector);
+		float mag = Physics.magnituge(dir) * Physics.magnituge(mVelocityVector);
+		double tempAngle = Math.acos(dot/mag);
+		drawAngle = (float)Math.toDegrees(tempAngle);
+		drawAngle -= 180.0f;
+		*/
+		
 		float hyp = Physics.calculateDistance(mStartingPos, mTargetPos);
 		float opp = mStartingPos.y - mTargetPos.y;
 		double tempAngle = Math.asin(opp/hyp);
@@ -89,9 +98,12 @@ public abstract class GameObject {
 		else if (mTargetPos.x < mStartingPos.x) {
 			drawAngle = (float)tempAngle;
 		}
-		else if (mTargetPos.x == mStartingPos.x) {
+		else if (mTargetPos.x == mStartingPos.x && mTargetPos.y < mStartingPos.y) {
 			drawAngle = 90.0f;
-		}		
+		}
+		else if (mTargetPos.x == mStartingPos.x && mTargetPos.y > mStartingPos.y) {
+			drawAngle = 90.0f+180.0f;
+		}
 	}
 	
 	private void calcInitVelocity() {
