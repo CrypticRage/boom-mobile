@@ -71,6 +71,7 @@ public class BoomActivity extends Activity {
     @Override
 	protected void onResume() {
         GlobalData.gameScore = 0;
+        GlobalData.baseHealth = 1000;
     	super.onResume();
         mPreview.resume();
     }
@@ -158,6 +159,10 @@ public class BoomActivity extends Activity {
     			R.drawable.ground);
     	SpriteData.bgSprites[SpriteData.BG_MOUNTAINS] = BitmapFactory.decodeResource(getResources(),
     			R.drawable.mountains);
+    	SpriteData.bgSprites[SpriteData.BG_GROUND_FLIP] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.ground_flip);
+    	SpriteData.bgSprites[SpriteData.BG_MOUNTAINS_FLIP] = BitmapFactory.decodeResource(getResources(),
+    			R.drawable.mountains_flip);
     }
 
     private void loadFont() {
