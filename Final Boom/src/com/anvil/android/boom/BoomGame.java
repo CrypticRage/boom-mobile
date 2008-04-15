@@ -9,7 +9,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+//import android.util.Log;
 
 import com.anvil.android.boom.logic.Explosion;
 import com.anvil.android.boom.logic.ExplosionUpdater;
@@ -33,10 +33,10 @@ public class BoomGame
 	private static final int NORMAL_MISSILE_RELOAD_TIME = 250;
 	private static final int BASE_KILLER_SPAWN_CAP_TIME = 1000;
 	
-	private static final int GAME_DIFFICULTY_EASY = 1;
-	private static final int GAME_DIFFICULTY_MEDIUM = 2;
-	private static final int GAME_DIFFICULTY_HARD = 3;
-	private static final int GAME_DIFFICULTY_INSANE = 4;
+//	private static final int GAME_DIFFICULTY_EASY = 1;
+//	private static final int GAME_DIFFICULTY_MEDIUM = 2;
+//	private static final int GAME_DIFFICULTY_HARD = 3;
+//	private static final int GAME_DIFFICULTY_INSANE = 4;
 	
 	private Semaphore mSem;					//Semaphore to protect game object array lists
 	private ArrayList<GameObject> mFriendlyMissiles; //Friendly GameMissile objects
@@ -171,32 +171,27 @@ public class BoomGame
     	float startingX = generator.nextInt (480);
     	long currentTime = System.currentTimeMillis ();
     	GameMissile m1;
-    	int gameDifficulty;
     	long runningTime = currentTime - mGameStartTime;
     	long runningTimeSeconds = runningTime / Physics.MILLISECONDS_PER_SECOND;
     	int missileGenerationTime, velocityAdditive;
     	
     	if (runningTimeSeconds < 30)
     	{
-    		gameDifficulty = GAME_DIFFICULTY_EASY;
     		missileGenerationTime = 2000;
     		velocityAdditive = 0;
     	}
     	else if (runningTimeSeconds < 60)
     	{
-    		gameDifficulty = GAME_DIFFICULTY_MEDIUM;
     		missileGenerationTime = 1500;
     		velocityAdditive = 5;
     	}
     	else if (runningTimeSeconds < 90)
     	{
-    		gameDifficulty = GAME_DIFFICULTY_HARD;
     		missileGenerationTime = 1000;
     		velocityAdditive = 10;
     	}
     	else
     	{
-    		gameDifficulty =  GAME_DIFFICULTY_INSANE;
     		missileGenerationTime = 500;
     		velocityAdditive = 15;
     	}
@@ -514,6 +509,7 @@ public class BoomGame
 						{
 							m.setState (GameObject.STATE_DYING);
 							
+//							Log.i ("updateEnemyProjectiles: ", m + " hit base");
 							//TODO: Should the base take damage from the actual impact?
 //							if (base.getState () == GameObject.STATE_ALIVE)
 //							{
@@ -578,13 +574,13 @@ public class BoomGame
 							float previousRadius = wave.getPreviousRadius ();
 							float currentRadius = wave.getCurrentRadius ();
 							
-
 							//Subtract the base radius
 							coreDistance -= baseRadius;
-							
+
 							//Our wave explosion hit something
-							if (coreDistance <= currentRadius &&
-								coreDistance > previousRadius)
+							if ((coreDistance <= currentRadius &&
+								 coreDistance > previousRadius) ||
+								(coreDistance < 0))
 							{
 								if (base.getState () == GameObject.STATE_ALIVE)
 								{
@@ -596,6 +592,7 @@ public class BoomGame
 									{
 										baseHP -= missileDamage;
 										base.setHitPoints (baseHP);
+//										Log.i ("updateEnemyProjectiles: ", "Base took damage from baseKiller, HP: " + baseHP);
 									}
 									else
 									{
@@ -604,7 +601,7 @@ public class BoomGame
 										{
 											baseHP -= missileDamage;
 											base.setHitPoints (baseHP);
-											Log.i ("updateEnemyProjectiles: ", "Base took damage, HP: " + baseHP);
+//											Log.i ("updateEnemyProjectiles: ", "Base took damage, HP: " + baseHP);
 										}
 										//Else deal a percentage of the max damage
 										else
@@ -615,14 +612,14 @@ public class BoomGame
 											
 											baseHP -= (missileDamage * reciprocol);
 											base.setHitPoints (baseHP);
-											Log.i ("updateEnemyProjectiles: ", "Base took damage, HP: " + baseHP);
+//											Log.i ("updateEnemyProjectiles: ", "Base took damage, HP: " + baseHP);
 										}
 									}
 									
 									//If the base just died
 									if (baseHP <= 0)
 									{
-										Log.i ("updateEnemyProjectiles: ", "Base dying");
+//										Log.i ("updateEnemyProjectiles: ", "Base dying");
 										base.setState (GameObject.STATE_DYING);
 									}
 								}
